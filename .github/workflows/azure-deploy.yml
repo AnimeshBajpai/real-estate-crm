@@ -57,9 +57,53 @@ jobs:
             mkdir -p .next/standalone/.next
             cp -r .next/static .next/standalone/.next/
             cp -r public .next/standalone/
+            
+            # Create a server.js file in the root for Azure compatibility
+            echo "Creating server.js file for Azure..."
+            cp .next/standalone/server.js .next/standalone/app.js
+            
+            # Create a web.config file to ensure Azure uses the correct startup command
+            echo "Creating web.config file for Azure..."
+            cat > .next/standalone/web.config << 'EOL'
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <system.webServer>
+    <webSocket enabled="false" />
+    <handlers>
+      <add name="iisnode" path="app.js" verb="*" modules="iisnode" />
+    </handlers>
+    <rewrite>
+      <rules>
+        <rule name="app">
+          <match url="/*" />
+          <action type="Rewrite" url="app.js" />
+        </rule>
+      </rules>
+    </rewrite>
+    <iisnode node_env="production" nodeProcessCommandLine="node --max-http-header-size=16384" />
+  </system.webServer>
+</configuration>
+EOL
+            echo "Setup complete for Azure deployment"
           else
             echo "Standalone output not found, falling back to regular package"
             echo "Using current directory as deployment package"
+            
+            # For non-standalone, create a server.js that wraps next start
+            echo "Creating server.js file for Azure compatibility..."
+            cat > server.js << 'EOL'
+// server.js
+const { exec } = require('child_process');
+const server = exec('npx next start');
+
+server.stdout.on('data', (data) => {
+  console.log(data);
+});
+
+server.stderr.on('data', (data) => {
+  console.error(data);
+});
+EOL
           fi
       
       - name: Optimize package for deployment
