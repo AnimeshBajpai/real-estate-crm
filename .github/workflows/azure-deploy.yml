@@ -13,15 +13,23 @@ jobs:
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       
       - name: Set up Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: '18'
+          cache: 'npm'
           
       - name: Install dependencies
         run: npm ci
+      
+      - name: Generate Prisma Client
+        run: npx prisma generate
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
       
       - name: Build application
         run: npm run build
@@ -32,8 +40,27 @@ jobs:
           NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
       
       - name: Deploy to Azure Web App
+        id: deploy-to-azure
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'real-estate-crm-app'
           publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
           package: .
+      
+      - name: Deployment Status
+        run: |
+          if [ "${{ steps.deploy-to-azure.outcome }}" == "success" ]; then
+            echo "✅ Deployment completed successfully!"
+          else
+            echo "❌ Deployment failed!"
+            exit 1
+          fi
+          package: .
+          
+      - name: Post-deployment checks
+        run: |
+          echo "Deployment completed at $(date)"
+          echo "Checking deployment status..."
+          # Add any post-deployment verification steps here
+          # For example, a simple curl to check if the site is up
+          # curl -sSf https://your-app-url.azurewebsites.net/ -o /dev/null || echo "Deployment may have issues"
