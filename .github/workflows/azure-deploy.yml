@@ -14,23 +14,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          fetch-depth: 1  # Shallow clone for faster checkout
+          fetch-depth: 1
       
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
           cache: 'npm'
-          
-      - name: Setup GitHub Actions Cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            .next/cache
-            node_modules/.cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
-          restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
       
       - name: Install dependencies
         run: npm ci --no-audit --prefer-offline
@@ -49,80 +39,55 @@ jobs:
           NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
           NODE_ENV: production
       
-      - name: Prepare standalone output
+      - name: Prepare deployment files
         run: |
-          # Ensure the standalone output directories exist
           if [ -d ".next/standalone" ]; then
-            echo "Standalone output exists, preparing for deployment"
+            echo "Using standalone output"
             mkdir -p .next/standalone/.next
             cp -r .next/static .next/standalone/.next/
             cp -r public .next/standalone/
             
-            # Create a server.js file in the root for Azure compatibility
-            echo "Creating server.js file for Azure..."
+            echo "Creating app.js from server.js"
             cp .next/standalone/server.js .next/standalone/app.js
             
-            # Create a web.config file to ensure Azure uses the correct startup command
-            echo "Creating web.config file for Azure..."
-            cat > .next/standalone/web.config << 'EOL'
-<?xml version="1.0" encoding="utf-8"?>
-<configuration>
-  <system.webServer>
-    <webSocket enabled="false" />
-    <handlers>
-      <add name="iisnode" path="app.js" verb="*" modules="iisnode" />
-    </handlers>
-    <rewrite>
-      <rules>
-        <rule name="app">
-          <match url="/*" />
-          <action type="Rewrite" url="app.js" />
-        </rule>
-      </rules>
-    </rewrite>
-    <iisnode node_env="production" nodeProcessCommandLine="node --max-http-header-size=16384" />
-  </system.webServer>
-</configuration>
-EOL
-            echo "Setup complete for Azure deployment"
-          else
-            echo "Standalone output not found, falling back to regular package"
-            echo "Using current directory as deployment package"
+            echo "Creating web.config file"
+            echo '<?xml version="1.0" encoding="utf-8"?>' > .next/standalone/web.config
+            echo '<configuration>' >> .next/standalone/web.config
+            echo '  <system.webServer>' >> .next/standalone/web.config
+            echo '    <webSocket enabled="false" />' >> .next/standalone/web.config
+            echo '    <handlers>' >> .next/standalone/web.config
+            echo '      <add name="iisnode" path="app.js" verb="*" modules="iisnode" />' >> .next/standalone/web.config
+            echo '    </handlers>' >> .next/standalone/web.config
+            echo '    <rewrite>' >> .next/standalone/web.config
+            echo '      <rules>' >> .next/standalone/web.config
+            echo '        <rule name="app">' >> .next/standalone/web.config
+            echo '          <match url="/*" />' >> .next/standalone/web.config
+            echo '          <action type="Rewrite" url="app.js" />' >> .next/standalone/web.config
+            echo '        </rule>' >> .next/standalone/web.config
+            echo '      </rules>' >> .next/standalone/web.config
+            echo '    </rewrite>' >> .next/standalone/web.config
+            echo '    <iisnode node_env="production" nodeProcessCommandLine="node --max-http-header-size=16384" />' >> .next/standalone/web.config
+            echo '  </system.webServer>' >> .next/standalone/web.config
+            echo '</configuration>' >> .next/standalone/web.config
             
-            # For non-standalone, create a server.js that wraps next start
-            echo "Creating server.js file for Azure compatibility..."
-            cat > server.js << 'EOL'
-// server.js
-const { exec } = require('child_process');
-const server = exec('npx next start');
-
-server.stdout.on('data', (data) => {
-  console.log(data);
-});
-
-server.stderr.on('data', (data) => {
-  console.error(data);
-});
-EOL
-          fi
-      
-      - name: Optimize package for deployment
-        run: |
-          # Remove unnecessary files to reduce package size
-          rm -rf .git .github node_modules/.cache
-          # Only include production dependencies
-          npm prune --production
-      
-      - name: Select deployment package
-        id: select-package
-        run: |
-          if [ -d ".next/standalone" ]; then
-            echo "Using standalone output for deployment"
             echo "deployment_package=.next/standalone" >> $GITHUB_OUTPUT
           else
-            echo "Using current directory for deployment"
+            echo "Using regular package"
+            echo "Creating server.js wrapper"
+            echo '// server.js' > server.js
+            echo 'const { exec } = require("child_process");' >> server.js
+            echo 'const server = exec("npx next start");' >> server.js
+            echo 'server.stdout.on("data", (data) => { console.log(data); });' >> server.js
+            echo 'server.stderr.on("data", (data) => { console.error(data); });' >> server.js
+            
             echo "deployment_package=." >> $GITHUB_OUTPUT
           fi
+        id: prepare-files
+      
+      - name: Optimize package
+        run: |
+          rm -rf .git .github node_modules/.cache
+          npm prune --production
       
       - name: Deploy to Azure Web App
         id: deploy-to-azure
@@ -130,8 +95,8 @@ EOL
         with:
           app-name: 'real-estate-crm-app'
           publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
-          package: ${{ steps.select-package.outputs.deployment_package }}
-          clean: true  # Clean deploy target before deploying
+          package: ${{ steps.prepare-files.outputs.deployment_package }}
+          clean: true
       
       - name: Deployment Status
         run: |
