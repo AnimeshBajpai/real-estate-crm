@@ -14,7 +14,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0
+          fetch-depth: 1  # Shallow clone for faster checkout
       
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -22,8 +22,18 @@ jobs:
           node-version: '18'
           cache: 'npm'
           
+      - name: Setup GitHub Actions Cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            .next/cache
+            node_modules/.cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
+      
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --no-audit --prefer-offline
       
       - name: Generate Prisma Client
         run: npx prisma generate
@@ -37,6 +47,20 @@ jobs:
           SHADOW_DATABASE_URL: ${{ secrets.SHADOW_DATABASE_URL }}
           NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
           NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+          NODE_ENV: production
+          
+      - name: Run Nextjs standalone output
+        run: |
+          # Create the standalone output for faster deployment
+          cp -r .next/static .next/standalone/.next/
+          cp -r public .next/standalone/
+      
+      - name: Optimize package for deployment
+        run: |
+          # Remove unnecessary files to reduce package size
+          rm -rf .git .github node_modules/.cache
+          # Only include production dependencies
+          npm prune --production
       
       - name: Deploy to Azure Web App
         id: deploy-to-azure
@@ -44,7 +68,8 @@ jobs:
         with:
           app-name: 'real-estate-crm-app'
           publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
-          package: .
+          package: .next/standalone
+          clean: true  # Clean deploy target before deploying
       
       - name: Deployment Status
         run: |
@@ -54,12 +79,3 @@ jobs:
             echo "❌ Deployment failed!"
             exit 1
           fi
-          package: .
-          
-      - name: Post-deployment checks
-        run: |
-          echo "Deployment completed at $(date)"
-          echo "Checking deployment status..."
-          # Add any post-deployment verification steps here
-          # For example, a simple curl to check if the site is up
-          # curl -sSf https://your-app-url.azurewebsites.net/ -o /dev/null || echo "Deployment may have issues"
