@@ -46,6 +46,11 @@ jobs:
             mkdir -p .next/standalone/.next
             cp -r .next/static .next/standalone/.next/
             cp -r public .next/standalone/
+              # Create a modified server.js that uses Azure's port
+            echo "// Modified server.js for Azure" > .next/standalone/server.js
+            echo "const server = require('./server/server.js');" >> .next/standalone/server.js
+            echo "// Log successful startup" >> .next/standalone/server.js
+            echo "console.log('Next.js server started successfully on port', process.env.PORT || 8080);" >> .next/standalone/server.js
             
             echo "Creating app.js from server.js"
             cp .next/standalone/server.js .next/standalone/app.js
@@ -66,10 +71,10 @@ jobs:
             echo '        </rule>' >> .next/standalone/web.config
             echo '      </rules>' >> .next/standalone/web.config
             echo '    </rewrite>' >> .next/standalone/web.config
-            echo '    <iisnode node_env="production" nodeProcessCommandLine="node --max-http-header-size=16384" />' >> .next/standalone/web.config
-            # Add environment variables section for PORT=3001
+            echo '    <iisnode node_env="production" watchedFiles="web.config;*.js" loggingEnabled="true" nodeProcessCommandLine="node --max-http-header-size=16384" />' >> .next/standalone/web.config
+            # Add environment variables section using Azure's recommended approach
             echo '    <appSettings>' >> .next/standalone/web.config
-            echo '      <add key="PORT" value="3001" />' >> .next/standalone/web.config
+            echo '      <add key="WEBSITE_NODE_DEFAULT_VERSION" value="18.20.0" />' >> .next/standalone/web.config
             echo '    </appSettings>' >> .next/standalone/web.config
             echo '  </system.webServer>' >> .next/standalone/web.config            
             echo '</configuration>' >> .next/standalone/web.config
