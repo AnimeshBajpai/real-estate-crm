@@ -6,7 +6,7 @@ import { authOptions } from '@/lib/auth'
 // PATCH /api/followups/[id] - Update a follow-up (e.g., mark as completed)
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -18,7 +18,7 @@ export async function PATCH(
       )
     }
 
-    const followUpId = params.id
+    const followUpId = context.params.id
     const body = await request.json()
     const { completed } = body
 
