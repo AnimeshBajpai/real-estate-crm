@@ -48,12 +48,19 @@ jobs:
           NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
           NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
           NODE_ENV: production
-          
-      - name: Run Nextjs standalone output
+      
+      - name: Prepare standalone output
         run: |
-          # Create the standalone output for faster deployment
-          cp -r .next/static .next/standalone/.next/
-          cp -r public .next/standalone/
+          # Ensure the standalone output directories exist
+          if [ -d ".next/standalone" ]; then
+            echo "Standalone output exists, preparing for deployment"
+            mkdir -p .next/standalone/.next
+            cp -r .next/static .next/standalone/.next/
+            cp -r public .next/standalone/
+          else
+            echo "Standalone output not found, falling back to regular package"
+            echo "Using current directory as deployment package"
+          fi
       
       - name: Optimize package for deployment
         run: |
@@ -62,13 +69,24 @@ jobs:
           # Only include production dependencies
           npm prune --production
       
+      - name: Select deployment package
+        id: select-package
+        run: |
+          if [ -d ".next/standalone" ]; then
+            echo "Using standalone output for deployment"
+            echo "deployment_package=.next/standalone" >> $GITHUB_OUTPUT
+          else
+            echo "Using current directory for deployment"
+            echo "deployment_package=." >> $GITHUB_OUTPUT
+          fi
+      
       - name: Deploy to Azure Web App
         id: deploy-to-azure
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'real-estate-crm-app'
           publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
-          package: .next/standalone
+          package: ${{ steps.select-package.outputs.deployment_package }}
           clean: true  # Clean deploy target before deploying
       
       - name: Deployment Status

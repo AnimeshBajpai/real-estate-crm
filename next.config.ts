@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
     // Ignore TypeScript errors during build to allow deployment
     ignoreBuildErrors: true,
   },
+  output: 'standalone', // Enable standalone output for optimized deployment
 };
 
 export default nextConfig;
