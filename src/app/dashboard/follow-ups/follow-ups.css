@@ -1,0 +1,232 @@
+/* Follow-ups page styles */
+.follow-ups-content {
+  padding: 1.5rem;
+}
+
+.follow-ups-content .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.follow-ups-content .title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.follow-ups-content .actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.follow-ups-content .filter-actions {
+  display: flex;
+  gap: 0.5rem;
+  background-color: #f3f4f6;
+  padding: 0.25rem;
+  border-radius: 0.5rem;
+}
+
+.follow-ups-content .filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  background: none;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.875rem;
+}
+
+.follow-ups-content .filter-btn:hover {
+  background-color: #e5e7eb;
+}
+
+.follow-ups-content .filter-btn.active {
+  background-color: #ffffff;
+  font-weight: 500;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.follow-ups-content .add-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.follow-ups-content .add-btn:hover {
+  background-color: #1d4ed8;
+}
+
+.follow-ups-content .loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  color: #6b7280;
+}
+
+.follow-ups-content .no-data {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  color: #6b7280;
+  gap: 1rem;
+}
+
+.follow-ups-content .no-data .add-btn {
+  margin-top: 1rem;
+}
+
+.follow-ups-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.follow-up-card {
+  background-color: #ffffff;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  border-left: 4px solid #2563eb;
+  transition: transform 0.2s;
+}
+
+.follow-up-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.follow-up-card.completed {
+  border-left-color: #10b981;
+  opacity: 0.7;
+}
+
+.follow-up-date {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #4b5563;
+  font-size: 0.875rem;
+}
+
+.follow-up-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.follow-up-details .lead-name {
+  font-weight: 600;
+  font-size: 1.125rem;
+  color: #1f2937;
+}
+
+.follow-up-details .notes {
+  color: #4b5563;
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.follow-up-details .contact {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #4b5563;
+  margin-top: 0.5rem;
+}
+
+.follow-up-details .contact a {
+  color: #2563eb;
+  text-decoration: none;
+}
+
+.follow-up-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.follow-up-actions .complete-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.75rem;
+  background-color: #10b981;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.follow-up-actions .complete-btn:hover {
+  background-color: #059669;
+}
+
+.follow-up-actions .more-btn {
+  background: none;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  transition: background-color 0.2s;
+}
+
+.follow-up-actions .more-btn:hover {
+  background-color: #f3f4f6;
+  color: #1f2937;
+}
+
+@media (max-width: 768px) {
+  .follow-ups-content .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .follow-ups-content .actions {
+    width: 100%;
+    flex-direction: column;
+  }
+  
+  .follow-ups-content .filter-actions {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .follow-ups-content .add-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .follow-ups-list {
+    grid-template-columns: 1fr;
+  }
+}

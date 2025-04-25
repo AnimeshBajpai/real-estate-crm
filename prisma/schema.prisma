@@ -1,0 +1,75 @@
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["microsoftSqlServer"]
+}
+
+datasource db {
+  provider          = "sqlserver"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  phone         String    @unique
+  password      String    @db.NVarChar(255)
+  name          String    @db.NVarChar(100)
+  role          String    @db.NVarChar(20) // Replaced enum with String
+  companyId     String?
+  company       Company?  @relation("CompanyEmployees", fields: [companyId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  managedCompany Company? @relation("CompanyManager")
+  leads         Lead[]    @relation("LeadOwner")
+  reportingTo   User?     @relation("BrokerHierarchy", fields: [managerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  managerId     String?
+  subBrokers    User[]    @relation("BrokerHierarchy")
+  followUps     FollowUp[]
+}
+
+// Enum values will be handled in application code
+// Valid role values: SUPER_ADMIN, LEAD_BROKER, SUB_BROKER
+
+model Company {
+  id          String    @id @default(cuid())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  name        String    @db.NVarChar(100)
+  leadBroker  User      @relation("CompanyManager", fields: [leadBrokerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  leadBrokerId String   @unique
+  employees   User[]    @relation("CompanyEmployees")
+  leads       Lead[]
+}
+
+model Lead {
+  id          String    @id @default(cuid())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  name        String    @db.NVarChar(100)
+  phone       String    @db.NVarChar(20)
+  email       String?   @db.NVarChar(100)
+  status      String    @db.NVarChar(20) // Replaced enum with String
+  notes       String?   @db.NVarChar(1000)
+  isPriority  Boolean   @default(false)
+  owner       User      @relation("LeadOwner", fields: [ownerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  ownerId     String
+  company     Company   @relation(fields: [companyId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  companyId   String
+  followUps   FollowUp[]
+}
+
+// Enum values will be handled in application code
+// Valid status values: NEW, CONTACTED, QUALIFIED, PROPOSAL_SENT, NEGOTIATING, CLOSED_WON, CLOSED_LOST
+
+model FollowUp {
+  id          String    @id @default(cuid())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  notes       String    @db.NVarChar(1000)
+  reminderDate DateTime
+  completed   Boolean   @default(false)
+  lead        Lead      @relation(fields: [leadId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  leadId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  userId      String
+}

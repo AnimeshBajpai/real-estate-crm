@@ -1,0 +1,404 @@
+/* Leads Page Styles */
+.leads-page {
+  padding: 2rem;
+}
+
+.leads-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.leads-title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #1f2937;
+}
+
+.leads-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.action-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+}
+
+.primary-button {
+  background: #2563eb;
+  color: white;
+}
+
+.primary-button:hover {
+  background: #1d4ed8;
+}
+
+.filter-button {
+  background: #f3f4f6;
+  color: #4b5563;
+}
+
+.filter-button:hover {
+  background: #e5e7eb;
+}
+
+/* Lead card action menu styles */
+.lead-menu-container {
+  position: relative;
+}
+
+.lead-action-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 180px;
+  background: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  z-index: 10;
+  overflow: hidden;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-size: 0.875rem;
+  color: #4b5563;
+  border: none;
+  background: transparent;
+  transition: all 0.2s;
+}
+
+.menu-item:hover {
+  background-color: #f3f4f6;
+  color: #1f2937;
+}
+
+/* View Toggle Styles */
+.view-toggle {
+  display: flex;
+  background: #f3f4f6;
+  border-radius: 0.5rem;
+  padding: 0.25rem;
+  margin-right: 0.5rem;
+}
+
+.toggle-button {
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border: none;
+  background: transparent;
+  color: #4b5563;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toggle-button:hover {
+  color: #1f2937;
+}
+
+.toggle-button.active {
+  background: #ffffff;
+  color: #1f2937;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Sub-broker Sections Styles */
+.subbroker-leads-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.subbroker-section {
+  background: #ffffff;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.subbroker-header {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #f3f4f6;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.subbroker-header:hover {
+  background-color: #f9fafb;
+}
+
+.subbroker-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.subbroker-icon {
+  color: #4b5563;
+}
+
+.subbroker-name {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #1f2937;
+  margin: 0;
+}
+
+.lead-count {
+  font-size: 0.875rem;
+  color: #6b7280;
+  background: #f3f4f6;
+  padding: 0.25rem 0.5rem;
+  border-radius: 1rem;
+}
+
+.expand-icon {
+  color: #6b7280;
+  transition: transform 0.2s ease;
+}
+
+.subbroker-leads {
+  padding: 1rem;
+}
+
+.loading-leads {
+  text-align: center;
+  padding: 2rem;
+  color: #6b7280;
+}
+
+.no-leads-message {
+  text-align: center;
+  padding: 2rem;
+  color: #6b7280;
+}
+
+.no-data-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  color: #6b7280;
+  gap: 1rem;
+}
+
+/* Action buttons for subbroker management */
+.action-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.leads-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.lead-card {
+  background: white;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out;
+  border: 1px solid #e5e7eb;
+}
+
+.lead-card:hover {
+  transform: translateY(-2px);
+}
+
+.lead-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.lead-info {
+  flex: 1;
+}
+
+.lead-name {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 0.25rem;
+}
+
+.lead-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.status-new {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.status-contacted {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.status-qualified {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.status-proposal {
+  background: #e0e7ff;
+  color: #4f46e5;
+}
+
+.status-negotiating {
+  background: #fce7f3;
+  color: #db2777;
+}
+
+.status-won {
+  background: #d1fae5;
+  color: #059669;
+}
+
+.status-lost {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.lead-details {
+  margin-top: 1rem;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+.detail-icon {
+  width: 1rem;
+  height: 1rem;
+  color: #9ca3af;
+}
+
+.lead-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.lead-action-button {
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  color: #6b7280;
+  transition: all 0.2s ease-in-out;
+}
+
+.lead-action-button:hover {
+  background: #f3f4f6;
+  color: #1f2937;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 2rem;
+}
+
+.page-button {
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  background: #f3f4f6;
+  color: #4b5563;
+  transition: all 0.2s ease-in-out;
+}
+
+.page-button:hover:not(.active) {
+  background: #e5e7eb;
+}
+
+.page-button.active {
+  background: #2563eb;
+  color: white;
+}
+
+.loading-state {
+  text-align: center;
+  padding: 2rem;
+  color: #6b7280;
+  font-size: 1.1rem;
+}
+
+.error-message {
+  background-color: #fee2e2;
+  border: 1px solid #ef4444;
+  color: #dc2626;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+}
+
+@media (max-width: 768px) {
+  .leads-header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .leads-actions {
+    width: 100%;
+  }
+
+  .action-button {
+    flex: 1;
+    justify-content: center;
+  }
+}
+
+/* Prioritized lead styling */
+.lead-action-button.prioritized {
+  color: #f59e0b; /* Amber/yellow color for starred items */
+}
+
+.lead-action-button.prioritized:hover {
+  background-color: rgba(245, 158, 11, 0.1);
+  color: #d97706; /* Slightly darker on hover */
+}
+
+/* Style for prioritized lead cards */
+.lead-card.prioritized {
+  border-left: 3px solid #f59e0b;
+  box-shadow: 0 4px 6px rgba(245, 158, 11, 0.2);
+}
