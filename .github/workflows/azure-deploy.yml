@@ -71,10 +71,10 @@ jobs:
             echo '    <appSettings>' >> .next/standalone/web.config
             echo '      <add key="PORT" value="3001" />' >> .next/standalone/web.config
             echo '    </appSettings>' >> .next/standalone/web.config
-            echo '  </system.webServer>' >> .next/standalone/web.config
+            echo '  </system.webServer>' >> .next/standalone/web.config            
             echo '</configuration>' >> .next/standalone/web.config
-            
-            echo "deployment_package=.next/standalone" >> $GITHUB_OUTPUT          else
+            echo "deployment_package=.next/standalone" >> $GITHUB_OUTPUT
+          else
             echo "Using regular package"
             echo "Creating server.js wrapper"
             echo '// server.js' > server.js
