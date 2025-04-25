@@ -67,16 +67,19 @@ jobs:
             echo '      </rules>' >> .next/standalone/web.config
             echo '    </rewrite>' >> .next/standalone/web.config
             echo '    <iisnode node_env="production" nodeProcessCommandLine="node --max-http-header-size=16384" />' >> .next/standalone/web.config
+            # Add environment variables section for PORT=3001
+            echo '    <appSettings>' >> .next/standalone/web.config
+            echo '      <add key="PORT" value="3001" />' >> .next/standalone/web.config
+            echo '    </appSettings>' >> .next/standalone/web.config
             echo '  </system.webServer>' >> .next/standalone/web.config
             echo '</configuration>' >> .next/standalone/web.config
             
-            echo "deployment_package=.next/standalone" >> $GITHUB_OUTPUT
-          else
+            echo "deployment_package=.next/standalone" >> $GITHUB_OUTPUT          else
             echo "Using regular package"
             echo "Creating server.js wrapper"
             echo '// server.js' > server.js
             echo 'const { exec } = require("child_process");' >> server.js
-            echo 'const server = exec("npx next start");' >> server.js
+            echo 'const server = exec("npx next start -p 3001");' >> server.js
             echo 'server.stdout.on("data", (data) => { console.log(data); });' >> server.js
             echo 'server.stderr.on("data", (data) => { console.error(data); });' >> server.js
             
