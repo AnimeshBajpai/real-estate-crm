@@ -47,19 +47,8 @@ jobs:
             mkdir -p .next/standalone/.next
             cp -r .next/static .next/standalone/.next/
             cp -r public .next/standalone/
-            
-            # Create server.js for Linux App Service - Using an inline approach instead of heredoc
-            echo '// Modified server.js for Linux Azure App Service' > .next/standalone/server.js
-            echo 'const path = require("path");' >> .next/standalone/server.js
-            echo '' >> .next/standalone/server.js
-            echo '// Get port from environment (Linux App Service provides this)' >> .next/standalone/server.js
-            echo 'const port = process.env.PORT || 8080;' >> .next/standalone/server.js
-            echo 'process.env.NODE_ENV = "production";' >> .next/standalone/server.js
-            echo 'process.chdir(__dirname);' >> .next/standalone/server.js
-            echo '' >> .next/standalone/server.js
-            echo '// Start the Next.js server' >> .next/standalone/server.js
-            echo 'require("./server/server.js");' >> .next/standalone/server.js
-            echo 'console.log(`Server running on port ${port} in production mode`);' >> .next/standalone/server.js
+              # Don't modify the server.js file that comes with standalone output
+            echo "// Using the original server.js from standalone output"
             
             # Create a custom package.json for Azure that uses node to start server.js
             echo '{' > .next/standalone/package.json
