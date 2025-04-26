@@ -1,0 +1,111 @@
+name: Deploy to Azure
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci --no-audit --prefer-offline
+      
+      - name: Generate Prisma Client
+        run: npx prisma generate
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      
+      - name: Build application
+        run: npm run build
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          SHADOW_DATABASE_URL: ${{ secrets.SHADOW_DATABASE_URL }}
+          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+          NODE_ENV: production
+      
+      - name: Prepare deployment files
+        id: prepare-files
+        run: |
+          if [ -d ".next/standalone" ]; then
+            echo "Using standalone output"
+            mkdir -p .next/standalone/.next
+            cp -r .next/static .next/standalone/.next/
+            cp -r public .next/standalone/
+            
+            # For Linux App Service, we can use a simpler server.js
+            cat > .next/standalone/server.js << 'EOL'
+// Modified server.js for Linux Azure App Service
+const path = require('path');
+
+// Get port from environment (Linux App Service provides this)
+const port = process.env.PORT || 8080;
+process.env.NODE_ENV = 'production';
+process.chdir(__dirname);
+
+// Start the Next.js server
+require('./server/server.js');
+console.log(`Server running on port ${port} in production mode`);
+EOL
+            
+            echo "deployment_package=.next/standalone" >> $GITHUB_OUTPUT
+          else
+            echo "Using regular package"
+            echo "Creating server.js wrapper for Linux"
+            cat > server.js << 'EOL'
+// server.js wrapper for Linux App Service
+const { exec } = require('child_process');
+const port = process.env.PORT || 8080;
+
+// Pass the PORT environment variable to Next.js
+const server = exec(`npx next start -p ${port}`);
+
+server.stdout.on('data', (data) => {
+  console.log(data);
+});
+
+server.stderr.on('data', (data) => {
+  console.error(data);
+});
+EOL
+            
+            echo "deployment_package=." >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Optimize package
+        run: |
+          rm -rf .git .github node_modules/.cache
+          npm prune --production
+      
+      - name: Deploy to Azure Web App
+        id: deploy-to-azure
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: 'real-estate-crm-app-linux'
+          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE_LINUX }}
+          package: ${{ steps.prepare-files.outputs.deployment_package }}
+          clean: true
+      
+      - name: Deployment Status
+        run: |
+          if [ "${{ steps.deploy-to-azure.outcome }}" == "success" ]; then
+            echo "✅ Deployment completed successfully!"
+          else
+            echo "❌ Deployment failed!"
+            exit 1
+          fi
