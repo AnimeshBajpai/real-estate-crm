@@ -61,6 +61,16 @@ jobs:
             echo 'require("./server/server.js");' >> .next/standalone/server.js
             echo 'console.log(`Server running on port ${port} in production mode`);' >> .next/standalone/server.js
             
+            # Create a custom package.json for Azure that uses node to start server.js
+            echo '{' > .next/standalone/package.json
+            echo '  "name": "real-estate-crm-app",' >> .next/standalone/package.json
+            echo '  "version": "1.0.0",' >> .next/standalone/package.json
+            echo '  "private": true,' >> .next/standalone/package.json
+            echo '  "scripts": {' >> .next/standalone/package.json
+            echo '    "start": "node server.js"' >> .next/standalone/package.json
+            echo '  }' >> .next/standalone/package.json
+            echo '}' >> .next/standalone/package.json
+            
             echo "deployment_package=.next/standalone" >> $GITHUB_OUTPUT
           else
             echo "Using regular package"
@@ -79,6 +89,13 @@ jobs:
             echo 'server.stderr.on("data", (data) => {' >> server.js
             echo '  console.error(data);' >> server.js
             echo '});' >> server.js
+            
+            # For non-standalone output, modify package.json for Azure
+            echo '"scripts": {' > package.json.tmp
+            echo '  "start": "node server.js"' >> package.json.tmp
+            echo '},' >> package.json.tmp
+            sed -i -e '/"scripts":{/r package.json.tmp' -e '/"scripts":{/d' package.json
+            rm package.json.tmp
             
             echo "deployment_package=." >> $GITHUB_OUTPUT
           fi
