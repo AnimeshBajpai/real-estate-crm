@@ -5,6 +5,7 @@ const prisma = new PrismaClient();
 
 async function main() {
   console.log('Starting to seed the database...');
+  console.log('Starting to seed the database...');
 
   try {
     // Create a super admin user
