@@ -48,41 +48,37 @@ jobs:
             cp -r .next/static .next/standalone/.next/
             cp -r public .next/standalone/
             
-            # Create server.js for Linux App Service
-            cat > .next/standalone/server.js << 'EOLJS'
-            // Modified server.js for Linux Azure App Service
-            const path = require('path');
-
-            // Get port from environment (Linux App Service provides this)
-            const port = process.env.PORT || 8080;
-            process.env.NODE_ENV = 'production';
-            process.chdir(__dirname);
-
-            // Start the Next.js server
-            require('./server/server.js');
-            console.log(`Server running on port ${port} in production mode`);
-            EOLJS
+            # Create server.js for Linux App Service - Using an inline approach instead of heredoc
+            echo '// Modified server.js for Linux Azure App Service' > .next/standalone/server.js
+            echo 'const path = require("path");' >> .next/standalone/server.js
+            echo '' >> .next/standalone/server.js
+            echo '// Get port from environment (Linux App Service provides this)' >> .next/standalone/server.js
+            echo 'const port = process.env.PORT || 8080;' >> .next/standalone/server.js
+            echo 'process.env.NODE_ENV = "production";' >> .next/standalone/server.js
+            echo 'process.chdir(__dirname);' >> .next/standalone/server.js
+            echo '' >> .next/standalone/server.js
+            echo '// Start the Next.js server' >> .next/standalone/server.js
+            echo 'require("./server/server.js");' >> .next/standalone/server.js
+            echo 'console.log(`Server running on port ${port} in production mode`);' >> .next/standalone/server.js
             
             echo "deployment_package=.next/standalone" >> $GITHUB_OUTPUT
           else
             echo "Using regular package"
             echo "Creating server.js wrapper for Linux"
-            cat > server.js << 'EOLJS'
-            // server.js wrapper for Linux App Service
-            const { exec } = require('child_process');
-            const port = process.env.PORT || 8080;
-
-            // Pass the PORT environment variable to Next.js
-            const server = exec(`npx next start -p ${port}`);
-
-            server.stdout.on('data', (data) => {
-              console.log(data);
-            });
-
-            server.stderr.on('data', (data) => {
-              console.error(data);
-            });
-            EOLJS
+            echo '// server.js wrapper for Linux App Service' > server.js
+            echo 'const { exec } = require("child_process");' >> server.js
+            echo 'const port = process.env.PORT || 8080;' >> server.js
+            echo '' >> server.js
+            echo '// Pass the PORT environment variable to Next.js' >> server.js
+            echo 'const server = exec(`npx next start -p ${port}`);' >> server.js
+            echo '' >> server.js
+            echo 'server.stdout.on("data", (data) => {' >> server.js
+            echo '  console.log(data);' >> server.js
+            echo '});' >> server.js
+            echo '' >> server.js
+            echo 'server.stderr.on("data", (data) => {' >> server.js
+            echo '  console.error(data);' >> server.js
+            echo '});' >> server.js
             
             echo "deployment_package=." >> $GITHUB_OUTPUT
           fi
