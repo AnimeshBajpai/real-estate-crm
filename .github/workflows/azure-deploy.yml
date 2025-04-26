@@ -48,41 +48,41 @@ jobs:
             cp -r .next/static .next/standalone/.next/
             cp -r public .next/standalone/
             
-            # For Linux App Service, we can use a simpler server.js
-            cat > .next/standalone/server.js << 'EOL'
-// Modified server.js for Linux Azure App Service
-const path = require('path');
+            # Create server.js for Linux App Service
+            cat > .next/standalone/server.js << 'EOLJS'
+            // Modified server.js for Linux Azure App Service
+            const path = require('path');
 
-// Get port from environment (Linux App Service provides this)
-const port = process.env.PORT || 8080;
-process.env.NODE_ENV = 'production';
-process.chdir(__dirname);
+            // Get port from environment (Linux App Service provides this)
+            const port = process.env.PORT || 8080;
+            process.env.NODE_ENV = 'production';
+            process.chdir(__dirname);
 
-// Start the Next.js server
-require('./server/server.js');
-console.log(`Server running on port ${port} in production mode`);
-EOL
+            // Start the Next.js server
+            require('./server/server.js');
+            console.log(`Server running on port ${port} in production mode`);
+            EOLJS
             
             echo "deployment_package=.next/standalone" >> $GITHUB_OUTPUT
           else
             echo "Using regular package"
             echo "Creating server.js wrapper for Linux"
-            cat > server.js << 'EOL'
-// server.js wrapper for Linux App Service
-const { exec } = require('child_process');
-const port = process.env.PORT || 8080;
+            cat > server.js << 'EOLJS'
+            // server.js wrapper for Linux App Service
+            const { exec } = require('child_process');
+            const port = process.env.PORT || 8080;
 
-// Pass the PORT environment variable to Next.js
-const server = exec(`npx next start -p ${port}`);
+            // Pass the PORT environment variable to Next.js
+            const server = exec(`npx next start -p ${port}`);
 
-server.stdout.on('data', (data) => {
-  console.log(data);
-});
+            server.stdout.on('data', (data) => {
+              console.log(data);
+            });
 
-server.stderr.on('data', (data) => {
-  console.error(data);
-});
-EOL
+            server.stderr.on('data', (data) => {
+              console.error(data);
+            });
+            EOLJS
             
             echo "deployment_package=." >> $GITHUB_OUTPUT
           fi
