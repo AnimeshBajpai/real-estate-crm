@@ -93,7 +93,7 @@ jobs:
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'real-estate-crm-app-linux'
-          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE_LINUX }}
+          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
           package: ${{ steps.prepare-files.outputs.deployment_package }}
           clean: true
       
