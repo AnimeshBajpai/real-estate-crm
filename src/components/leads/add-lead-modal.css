@@ -14,14 +14,22 @@
 
 .modal-content {
   background: white;
-  border-radius: 1rem;
-  padding: 2rem;
-  width: 90%;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  width: 95%;
   max-width: 600px;
   max-height: 90vh;
   overflow-y: auto;
   position: relative;
   animation: modal-appear 0.3s ease-out;
+}
+
+@media (min-width: 640px) {
+  .modal-content {
+    border-radius: 1rem;
+    padding: 2rem;
+    width: 90%;
+  }
 }
 
 @keyframes modal-appear {

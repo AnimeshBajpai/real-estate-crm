@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode } from "react";
+import { ReactNode, useRef, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
@@ -26,6 +26,34 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const pathname = usePathname();
   const { data: session } = useSession();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  
+  // Close sidebar when clicking outside on mobile
+  const sidebarRef = useRef<HTMLElement>(null);
+  
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        isSidebarOpen &&
+        sidebarRef.current && 
+        !sidebarRef.current.contains(event.target as Node) &&
+        window.innerWidth < 1024
+      ) {
+        setIsSidebarOpen(false);
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isSidebarOpen]);
+  
+  // Close sidebar when changing routes on mobile
+  useEffect(() => {
+    if (window.innerWidth < 1024) {
+      setIsSidebarOpen(false);
+    }
+  }, [pathname]);
 
   const navigationItems = [
     {
@@ -56,20 +84,43 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
-  };
+  };  // State to track if we're on mobile
+  const [isMobile, setIsMobile] = useState(false);
+  
+  // Check for mobile size on component mount and window resize
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    
+    // Initial check
+    checkIfMobile();
+    
+    // Add resize listener
+    window.addEventListener('resize', checkIfMobile);
+    
+    // Cleanup
+    return () => window.removeEventListener('resize', checkIfMobile);
+  }, []);
 
   return (
     <div className="dashboard-layout">
-      <button className="mobile-menu-button" onClick={toggleSidebar}>
+      <button className="mobile-menu-button" onClick={toggleSidebar} aria-label="Toggle menu">
         <Menu size={24} />
       </button>
 
-      <aside className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
+      <aside ref={sidebarRef} className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
         <div className="sidebar-header">
           <h2>Real Estate CRM</h2>
-          <button className="close-sidebar" onClick={() => setIsSidebarOpen(false)}>
-            <X size={24} />
-          </button>
+          {isMobile && (
+            <button 
+              className="close-sidebar" 
+              onClick={() => setIsSidebarOpen(false)} 
+              aria-label="Close menu"
+            >
+              <X size={24} />
+            </button>
+          )}
         </div>
 
         <nav className="sidebar-nav">

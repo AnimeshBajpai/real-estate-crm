@@ -40,14 +40,47 @@ interface FollowUp {
   };
 }
 
+interface Broker {
+  id: string;
+  name: string;
+  role: string;
+  company?: {
+    name: string;
+  };
+}
+
 export default function FollowUpsContent() {
   const { data: session, status } = useSession();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [followUps, setFollowUps] = useState<FollowUp[]>([]);
+  const [brokers, setBrokers] = useState<Broker[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [notification, setNotification] = useState<{ type: 'success' | 'error', message: string } | null>(null);
   const [filter, setFilter] = useState<'all' | 'upcoming' | 'completed'>('upcoming');
+  const [selectedBroker, setSelectedBroker] = useState<string>("");  // Fetch available brokers for filtering
+  useEffect(() => {
+    const fetchBrokers = async () => {
+      if (status !== 'authenticated') {
+        return;
+      }
+      
+      try {
+        const response = await fetch('/api/users/brokers');
+        if (!response.ok) {
+          throw new Error(`Error ${response.status}: ${response.statusText}`);
+        }
+        const data = await response.json();
+        setBrokers(data);
+      } catch (err: any) {
+        console.error('Error fetching brokers:', err);
+      }
+    };
+    
+    if (status === 'authenticated') {
+      fetchBrokers();
+    }
+  }, [status]);
 
   const fetchFollowUps = async () => {
     if (status !== 'authenticated') {
@@ -58,11 +91,24 @@ export default function FollowUpsContent() {
     try {
       setIsLoading(true);
       let url = '/api/followups';
+      let params = [];
       
+      // Filter by status
       if (filter === 'upcoming') {
-        url += '?upcoming=true&completed=false';
+        // Filter by future reminder date, not completion
+        params.push('reminderDate=future&completed=false');
       } else if (filter === 'completed') {
-        url += '?completed=true';
+        params.push('completed=true');
+      }
+      
+      // Filter by broker if selected
+      if (selectedBroker) {
+        params.push(`userId=${selectedBroker}`);
+      }
+      
+      // Add parameters to URL
+      if (params.length > 0) {
+        url += `?${params.join('&')}`;
       }
       
       const response = await fetch(url);
@@ -80,12 +126,11 @@ export default function FollowUpsContent() {
       setIsLoading(false);
     }
   };
-  
-  useEffect(() => {
+    useEffect(() => {
     if (status === 'authenticated') {
       fetchFollowUps();
     }
-  }, [status, filter]);
+  }, [status, filter, selectedBroker]);
   
   const handleAddFollowUp = () => {
     setIsModalOpen(true);
@@ -125,8 +170,7 @@ export default function FollowUpsContent() {
   return (
     <div className="follow-ups-content">
       <div className="header">
-        <h1 className="title">Follow-ups</h1>
-        <div className="actions">
+        <h1 className="title">Follow-ups</h1>        <div className="actions">
           <div className="filter-actions">
             <button 
               className={`filter-btn ${filter === 'upcoming' ? 'active' : ''}`}
@@ -149,6 +193,24 @@ export default function FollowUpsContent() {
               <Filter size={18} />
               All
             </button>
+            
+            {/* Broker filter dropdown */}
+            {brokers.length > 0 && (
+              <div className="broker-filter">
+                <select
+                  value={selectedBroker}
+                  onChange={(e) => setSelectedBroker(e.target.value)}
+                  className="broker-select"
+                >
+                  <option value="">All Brokers</option>
+                  {brokers.map((broker) => (
+                    <option key={broker.id} value={broker.id}>
+                      {broker.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
           </div>
           <button className="add-btn" onClick={handleAddFollowUp}>
             <Plus size={18} />

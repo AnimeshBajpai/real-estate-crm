@@ -10,6 +10,28 @@
   margin-bottom: 2rem;
 }
 
+/* Loading and error states */
+.dashboard-loading,
+.dashboard-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  text-align: center;
+}
+
+.dashboard-loading p,
+.dashboard-error p {
+  margin-top: 1rem;
+  color: #6b7280;
+}
+
+.dashboard-error h2 {
+  color: #dc2626;
+  margin-bottom: 1rem;
+}
+
 .welcome-section {
   background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
   color: white;
@@ -119,15 +141,37 @@
   font-weight: 500;
 }
 
-.status-hot { background: #fee2e2; color: #dc2626; }
-.status-warm { background: #fef3c7; color: #d97706; }
-.status-cold { background: #dbeafe; color: #2563eb; }
+/* Lead owner info */
+.lead-owner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.status-new { background: #dbeafe; color: #2563eb; }
+.status-contacted { background: #fef3c7; color: #d97706; }
+.status-qualified { background: #dcfce7; color: #16a34a; }
+.status-proposal_sent { background: #e0e7ff; color: #4f46e5; }
+.status-negotiating { background: #fce7f3; color: #db2777; }
+.status-closed_won { background: #d1fae5; color: #059669; }
+.status-closed_lost { background: #fee2e2; color: #dc2626; }
 
 .followup-type {
   padding: 0.25rem 0.75rem;
   border-radius: 1rem;
   font-size: 0.75rem;
   font-weight: 500;
+}
+
+/* Follow-up assignee */
+.followup-assignee {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 1rem;
+  background: #e5e7eb;
+  color: #4b5563;
 }
 
 .type-call { background: #dcfce7; color: #16a34a; }
@@ -146,4 +190,41 @@
 
 .view-all-button:hover {
   background: #dbeafe;
+}
+
+.no-data-message {
+  text-align: center;
+  padding: 2rem;
+  color: #6b7280;
+  background: #f9fafb;
+  border-radius: 0.5rem;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .dashboard-page {
+    padding: 1rem;
+  }
+  
+  .welcome-section {
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+  
+  .content-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
 }

@@ -28,6 +28,7 @@
   background-color: #f3f4f6;
   padding: 0.25rem;
   border-radius: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .follow-ups-content .filter-btn {
@@ -201,32 +202,59 @@
 
 .follow-up-actions .more-btn:hover {
   background-color: #f3f4f6;
-  color: #1f2937;
+}
+
+/* Broker filter styles */
+.broker-filter {
+  margin-left: 0.5rem;
+}
+
+.broker-select {
+  background-color: #fff;
+  border: 1px solid #e5e7eb;
+  padding: 0.375rem 2rem 0.375rem 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  color: #4b5563;
+  cursor: pointer;
+  height: 2.25rem;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='feather feather-chevron-down'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  background-size: 1rem;
+  min-width: 150px;
+}
+
+.broker-select:hover {
+  border-color: #d1d5db;
+}
+
+.broker-select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
 }
 
 @media (max-width: 768px) {
-  .follow-ups-content .header {
+  .follow-ups-content .actions {
     flex-direction: column;
     align-items: flex-start;
-    gap: 1rem;
-  }
-  
-  .follow-ups-content .actions {
-    width: 100%;
-    flex-direction: column;
+    gap: 0.75rem;
   }
   
   .follow-ups-content .filter-actions {
+    flex-wrap: wrap;
     width: 100%;
-    justify-content: center;
   }
   
-  .follow-ups-content .add-btn {
+  .broker-filter {
+    margin-left: 0;
+    margin-top: 0.5rem;
     width: 100%;
-    justify-content: center;
   }
   
-  .follow-ups-list {
-    grid-template-columns: 1fr;
+  .broker-select {
+    width: 100%;
   }
 }

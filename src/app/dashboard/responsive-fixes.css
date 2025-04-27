@@ -1,0 +1,76 @@
+/* Mobile-first responsive fixes */
+
+/* Grid layouts for cards */
+.leads-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+/* Tablet view */
+@media (min-width: 640px) {
+  .leads-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+  }
+}
+
+/* Desktop view */
+@media (min-width: 1024px) {
+  .leads-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+/* Mobile optimizations for cards */
+.lead-card {
+  padding: 1rem;
+}
+
+@media (min-width: 640px) {
+  .lead-card {
+    padding: 1.5rem;
+  }
+}
+
+/* Mobile optimizations for tables */
+.data-table {
+  display: block;
+  overflow-x: auto;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Stack form fields on mobile */
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .form-row {
+    flex-direction: row;
+  }
+}
+
+/* Adjust modal dialogs for mobile */
+.modal-content {
+  width: 95%;
+  max-width: 95%;
+  padding: 1rem;
+}
+
+@media (min-width: 640px) {
+  .modal-content {
+    width: 90%;
+    max-width: 500px;
+    padding: 1.5rem;
+  }
+}
+
+/* Adjust button sizes for touch targets on mobile */
+.mobile-button {
+  min-height: 44px; /* Recommended touch target size */
+}

@@ -13,12 +13,11 @@ export async function GET(request: Request) {
         { error: 'Unauthorized' },
         { status: 401 }
       )
-    }
-
-    const { searchParams } = new URL(request.url)
+    }    const { searchParams } = new URL(request.url)
     const leadId = searchParams.get('leadId')
+    const userId = searchParams.get('userId') // Added userId filter
     const completed = searchParams.get('completed') === 'true'
-    const upcoming = searchParams.get('upcoming') === 'true'
+    const reminderDateFilter = searchParams.get('reminderDate')
     
     // Get current user
     const currentUser = await prisma.user.findUnique({
@@ -39,18 +38,55 @@ export async function GET(request: Request) {
       where.leadId = leadId
     }
     
+    // Filter by broker/user if provided
+    if (userId) {
+      // Check if the current user has permission to see the requested user's follow-ups
+      if (session.user.role === 'SUB_BROKER' && userId !== currentUser.id) {
+        return NextResponse.json(
+          { error: 'You can only view your own follow-ups' },
+          { status: 403 }
+        )
+      }
+      
+      // For lead brokers, ensure they can only see their own or their sub-brokers' follow-ups
+      if (session.user.role === 'LEAD_BROKER' && userId !== currentUser.id) {
+        const subBroker = await prisma.user.findFirst({
+          where: {
+            id: userId,
+            managerId: currentUser.id
+          }
+        })
+        
+        if (!subBroker) {
+          return NextResponse.json(
+            { error: 'You can only view follow-ups for yourself or your sub-brokers' },
+            { status: 403 }
+          )
+        }
+      }
+      
+      where.userId = userId
+    }
+    
     // Filter by completion status if provided
     if (searchParams.has('completed')) {
       where.completed = completed
     }
     
-    // For upcoming reminders (for today and future)
-    if (upcoming) {
+    // Filter by reminder date
+    if (reminderDateFilter === 'future') {
+      // For upcoming reminders (today and future)
       const today = new Date()
       today.setHours(0, 0, 0, 0)
-      
       where.reminderDate = {
         gte: today
+      }
+    } else if (reminderDateFilter === 'past') {
+      // For past reminders
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
+      where.reminderDate = {
+        lt: today
       }
     }
     
@@ -134,10 +170,8 @@ export async function POST(request: Request) {
         { error: 'Unauthorized' },
         { status: 401 }
       )
-    }
-
-    const body = await request.json()
-    const { leadId, notes, reminderDate, completed = false } = body
+    }    const body = await request.json()
+    const { leadId, notes, reminderDate, completed = false, assignedUserId } = body
 
     // Validate input
     if (!leadId || !notes || !reminderDate) {
@@ -186,8 +220,58 @@ export async function POST(request: Request) {
           { status: 403 }
         )
       }
+    }    // If assignedUserId is provided, need to check if current user has permission to assign
+    let assignToUserId = currentUser.id;
+    
+    if (assignedUserId) {
+      // Check if the assigned user exists
+      const assignedUser = await prisma.user.findUnique({
+        where: { id: assignedUserId },
+        include: { company: true }
+      });
+      
+      if (!assignedUser) {
+        return NextResponse.json(
+          { error: 'Assigned user not found' },
+          { status: 404 }
+        );
+      }
+      
+      // Check permissions for assignment
+      if (session.user.role === 'SUPER_ADMIN') {
+        // Super admin can assign to anyone
+        assignToUserId = assignedUserId;
+      } else if (session.user.role === 'LEAD_BROKER') {
+        // Lead broker can only assign to users in their company
+        if (assignedUser.companyId !== currentUser.companyId) {
+          return NextResponse.json(
+            { error: 'You can only assign follow-ups to brokers in your company' },
+            { status: 403 }
+          );
+        }
+        
+        // Check if assigned user is a sub-broker of the current lead broker
+        if (assignedUserId !== currentUser.id && assignedUser.managerId !== currentUser.id) {
+          return NextResponse.json(
+            { error: 'You can only assign follow-ups to yourself or your sub-brokers' },
+            { status: 403 }
+          );
+        }
+        
+        assignToUserId = assignedUserId;
+      } else {
+        // Sub-brokers can only assign to themselves
+        if (assignedUserId !== currentUser.id) {
+          return NextResponse.json(
+            { error: 'You can only assign follow-ups to yourself' },
+            { status: 403 }
+          );
+        }
+        
+        assignToUserId = currentUser.id;
+      }
     }
-
+    
     // Create the follow-up
     const followUp = await prisma.followUp.create({
       data: {
@@ -198,7 +282,7 @@ export async function POST(request: Request) {
           connect: { id: leadId }
         },
         user: {
-          connect: { id: currentUser.id }
+          connect: { id: assignToUserId }
         }
       },
       include: {

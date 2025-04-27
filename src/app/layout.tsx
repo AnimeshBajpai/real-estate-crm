@@ -2,12 +2,14 @@ import { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { NextAuthProvider } from "@/components/auth/next-auth-provider";
+import { mobileMetadata } from "@/lib/metadata";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "DevBox",
-  description: "A powerful developer toolbox",
+  ...mobileMetadata,
+  title: "Real Estate CRM",
+  description: "Manage your real estate business efficiently",
 };
 
 export default function RootLayout({

@@ -17,4 +17,29 @@
   }
 }
 
+/* Mobile optimizations */
+
+/* Make inputs more touch-friendly on mobile */
+input, select, textarea, button {
+  font-size: 16px !important; /* Prevents iOS Safari from zooming in */
+}
+
+@media (min-width: 768px) {
+  input, select, textarea, button {
+    font-size: inherit !important;
+  }
+}
+
+/* Improve scrolling on iOS */
+* {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Fix for position:fixed elements on iOS */
+.ios-fixed {
+  position: fixed;
+  width: 100%;
+  transform: translateZ(0);
+}
+
 /* Test comment to trigger GitHub Actions pipeline */

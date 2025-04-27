@@ -12,6 +12,15 @@ interface Lead {
   status: string;
 }
 
+interface Broker {
+  id: string;
+  name: string;
+  role: string;
+  company?: {
+    name: string;
+  };
+}
+
 interface AddFollowUpModalProps {
   onClose: () => void;
   onFollowUpCreated: () => void;
@@ -21,6 +30,7 @@ interface AddFollowUpModalProps {
 export function AddFollowUpModal({ onClose, onFollowUpCreated, initialLeadId }: AddFollowUpModalProps) {
   const { data: session } = useSession();
   const [leads, setLeads] = useState<Lead[]>([]);
+  const [brokers, setBrokers] = useState<Broker[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   
@@ -28,24 +38,42 @@ export function AddFollowUpModal({ onClose, onFollowUpCreated, initialLeadId }: 
     leadId: initialLeadId || "",
     notes: "",
     reminderDate: "",
+    assignedUserId: "",
   });
-  
-  // Fetch leads to select from
+    // Fetch leads and brokers to select from
   useEffect(() => {
-    const fetchLeads = async () => {
+    const fetchData = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch("/api/leads");
-        if (!response.ok) {
-          throw new Error(`Error ${response.status}: ${response.statusText}`);
+        
+        // Fetch leads
+        const leadsResponse = await fetch("/api/leads");
+        if (!leadsResponse.ok) {
+          throw new Error(`Error ${leadsResponse.status}: ${leadsResponse.statusText}`);
         }
-        const data = await response.json();
-        setLeads(data);
+        const leadsData = await leadsResponse.json();
+        setLeads(leadsData);
         
         // If initialLeadId is not provided and we have leads, set the first lead as default
-        if (!initialLeadId && data.length > 0) {
-          setFormData(prev => ({ ...prev, leadId: data[0].id }));
+        if (!initialLeadId && leadsData.length > 0) {
+          setFormData(prev => ({ ...prev, leadId: leadsData[0].id }));
         }
+        
+        // Fetch brokers
+        const brokersResponse = await fetch("/api/users/brokers");
+        if (!brokersResponse.ok) {
+          throw new Error(`Error ${brokersResponse.status}: ${brokersResponse.statusText}`);
+        }
+        const brokersData = await brokersResponse.json();
+        setBrokers(brokersData);
+        
+        // Set currently logged in user as default assignee
+        if (session?.user?.id) {
+          setFormData(prev => ({ ...prev, assignedUserId: session.user.id }));
+        } else if (brokersData.length > 0) {
+          setFormData(prev => ({ ...prev, assignedUserId: brokersData[0].id }));
+        }
+        
       } catch (err: any) {
         setError(err.message);
       } finally {
@@ -53,8 +81,8 @@ export function AddFollowUpModal({ onClose, onFollowUpCreated, initialLeadId }: 
       }
     };
     
-    fetchLeads();
-  }, [initialLeadId]);
+    fetchData();
+  }, [initialLeadId, session?.user?.id]);
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -148,7 +176,25 @@ export function AddFollowUpModal({ onClose, onFollowUpCreated, initialLeadId }: 
               />
             </div>
           </div>
-          
+            <div className="form-group">
+            <label htmlFor="assignedUserId">Assign To</label>
+            <select
+              id="assignedUserId"
+              name="assignedUserId"
+              value={formData.assignedUserId}
+              onChange={handleChange}
+              required
+              disabled={isLoading}
+            >
+              <option value="">Select a broker</option>
+              {brokers.map(broker => (
+                <option key={broker.id} value={broker.id}>
+                  {broker.name} {broker.company ? `(${broker.company.name})` : ''}
+                </option>
+              ))}
+            </select>
+          </div>
+
           <div className="form-group">
             <label htmlFor="notes">Notes</label>
             <textarea

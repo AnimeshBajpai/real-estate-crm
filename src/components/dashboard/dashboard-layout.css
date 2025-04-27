@@ -2,11 +2,13 @@
 .dashboard-layout {
   display: flex;
   min-height: 100vh;
+  position: relative;
 }
 
 .dashboard-container {
   display: flex;
   min-height: 100vh;
+  width: 100%;
 }
 
 .sidebar {
@@ -19,24 +21,21 @@
   height: 100vh;
   position: fixed;
   left: 0;
-}
-
-.sidebar-mobile {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 280px;
-  height: 100vh;
-  background-color: #1f2937;
-  color: #ffffff;
   z-index: 50;
-  padding: 1rem;
   transform: translateX(-100%);
   transition: transform 0.3s ease-in-out;
 }
 
-.sidebar-mobile.open {
+.sidebar.open {
   transform: translateX(0);
+}
+
+/* On desktop, always show the sidebar */
+@media (min-width: 1024px) {
+  .sidebar {
+    transform: translateX(0);
+    transition: none;
+  }
 }
 
 .sidebar-header {
@@ -46,6 +45,25 @@
   padding-bottom: 1rem;
   margin-bottom: 1rem;
   border-bottom: 1px solid #374151;
+}
+
+.close-sidebar {
+  background: none;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  padding: 0.5rem;
+  display: block;
+}
+
+.close-sidebar:hover {
+  color: #ffffff;
+}
+
+@media (min-width: 1024px) {
+  .close-sidebar {
+    display: none;
+  }
 }
 
 .sidebar-title {
@@ -100,27 +118,31 @@
 
 .dashboard-main {
   flex: 1;
-  margin-left: 280px; /* Same as sidebar width */
   background-color: #f9fafb;
-  width: calc(100% - 280px);
+  width: 100%;
+  transition: margin-left 0.3s ease-in-out;
 }
 
 .mobile-header {
-  display: none;
+  display: block;
   padding: 1rem;
   background-color: #ffffff;
   border-bottom: 1px solid #e5e7eb;
 }
 
-@media (max-width: 1024px) {
-  .sidebar {
+/* On desktop, adjust the main content area */
+@media (min-width: 1024px) {
+  .dashboard-main {
+    margin-left: 280px; /* Same as sidebar width */
+    width: calc(100% - 280px);
+  }
+  
+  .mobile-menu-button {
     display: none;
   }
-
+  
   .mobile-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    display: none;
   }
 }
 
@@ -130,6 +152,11 @@
   color: #4b5563;
   cursor: pointer;
   padding: 0.5rem;
+  display: block;
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 40;
 }
 
 .mobile-menu-button:hover {
