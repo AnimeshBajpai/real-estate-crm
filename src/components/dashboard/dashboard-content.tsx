@@ -145,8 +145,7 @@ export function DashboardContent() {
       </section>
 
       {stats && (
-        <div className="stats-grid">
-          <div className="stat-card">
+        <div className="stats-grid">          <Link href="/dashboard/leads" className="stat-card clickable-card">
             <div className="stat-header">
               <div className="stat-icon leads">
                 <Users size={24} />
@@ -156,9 +155,7 @@ export function DashboardContent() {
             <div className="stat-value">{stats.leadsCount}</div>
             <div className="stat-label">Total Leads</div>
             <div className="stat-trend">Under your management</div>
-          </div>
-
-          <div className="stat-card">
+          </Link>          <Link href="/dashboard/follow-ups" className="stat-card clickable-card">
             <div className="stat-header">
               <div className="stat-icon followups">
                 <CalendarClock size={24} />
@@ -167,7 +164,7 @@ export function DashboardContent() {
             <div className="stat-value">{stats.followUpsCount}</div>
             <div className="stat-label">Active Follow-ups</div>
             <div className="stat-trend">{stats.pendingTodayFollowUps} pending today</div>
-          </div>
+          </Link>
 
           <div className="stat-card">
             <div className="stat-header">
@@ -209,17 +206,15 @@ export function DashboardContent() {
                 <div className="no-data-message">
                   <p>No leads found</p>
                 </div>
-              ) : (
-                activities.recentLeads.map((lead) => (
-                  <div key={lead.id} className="lead-item">
+              ) : (                activities.recentLeads.map((lead) => (                  <Link href={`/dashboard/leads?id=${lead.id}`} key={lead.id} className="lead-item clickable">
                     <div className="lead-avatar">
                       <UserCircle size={24} />
                     </div>
                     <div className="lead-content">
                       <div className="lead-header">
-                        <h3>{lead.name}</h3>
+                        <h3 className="lead-name">{lead.name}</h3>
                         <span className={`lead-status status-${lead.status.toLowerCase()}`}>
-                          {lead.status}
+                          {lead.status.replace('_', ' ')}
                         </span>
                       </div>
                       <div className="lead-details">
@@ -233,7 +228,7 @@ export function DashboardContent() {
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 ))
               )}
             </div>
@@ -250,12 +245,10 @@ export function DashboardContent() {
                 <div className="no-data-message">
                   <p>No pending follow-ups</p>
                 </div>
-              ) : (
-                activities.pendingFollowUps.map((followUp) => (
-                  <div key={followUp.id} className="followup-item">
+              ) : (                activities.pendingFollowUps.map((followUp) => (                  <Link href={`/dashboard/follow-ups?id=${followUp.id}`} key={followUp.id} className="followup-item clickable">
                     <div className="followup-content">
                       <div className="followup-header">
-                        <h3>{followUp.lead.name}</h3>
+                        <h3 className="followup-name">{followUp.lead.name}</h3>
                         <span className="followup-assignee">
                           {followUp.user.name}
                         </span>
@@ -275,7 +268,7 @@ export function DashboardContent() {
                       </div>
                       <p className="followup-notes">{followUp.notes}</p>
                     </div>
-                  </div>
+                  </Link>
                 ))
               )}
             </div>

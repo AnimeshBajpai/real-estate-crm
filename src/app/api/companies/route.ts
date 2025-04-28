@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
 import { getServerSession } from 'next-auth'
 import { authOptions } from "@/lib/auth";
-
-const prisma = new PrismaClient()
+import { prisma } from '@/lib/prisma';
 
 // GET /api/companies
 export async function GET(request: Request) {
@@ -15,11 +13,9 @@ export async function GET(request: Request) {
         { error: 'Unauthorized' },
         { status: 401 }
       )
-    }
-
-    // Only super admins can see all companies
+    }    // Only super admins can see all companies
     // Lead brokers and sub brokers can only see their own company
-    let companies
+    let companies: any[] = [];
     if (session.user.role === 'SUPER_ADMIN') {
       companies = await prisma.company.findMany({
         include: {

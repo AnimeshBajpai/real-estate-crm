@@ -1,0 +1,52 @@
+/* Company detail page shadcn UI component overrides */
+
+/* Fix for Card component in company detail page */
+.company-detail .card {
+  background-color: white !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Target shadcn Card components even without .card class using their class names */
+.company-detail div[class*="Card-root"] {
+  background-color: white !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+  overflow: hidden;
+}
+
+.company-detail div[class*="CardHeader-root"] {
+  padding: 1.25rem !important;
+  padding-bottom: 0.75rem !important;
+  border-bottom: 1px solid #f3f4f6 !important;
+}
+
+.company-detail div[class*="CardTitle-root"] {
+  font-size: 1.125rem !important;
+  font-weight: 600 !important;
+  margin: 0 !important;
+  color: #111827 !important;
+}
+
+.company-detail div[class*="CardContent-root"] {
+  padding: 1.25rem !important;
+}
+
+/* Target the built in tailwind classes for shadcn */
+.company-detail .bg-card {
+  background-color: white !important;
+}
+
+.company-detail .text-card-foreground {
+  color: #111827 !important;
+}
+
+/* Force card to have border and background */
+.company-detail .border {
+  border: 1px solid #e5e7eb !important;
+}
+
+/* Override any custom background set in the page */
+.company-detail .bg-white {
+  background-color: white !important;
+}

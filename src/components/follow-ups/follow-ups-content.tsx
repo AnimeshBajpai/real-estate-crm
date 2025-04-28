@@ -11,8 +11,10 @@ import {
   MoreVertical,
   Clock,
   Plus,
-  CalendarClock
+  CalendarClock,
+  User
 } from "lucide-react";
+import { FilterDropdown } from "@/components/ui/filter-dropdown";
 import { AddFollowUpModal } from "@/components/follow-ups/add-follow-up-modal";
 import { Notification } from "@/components/ui/notification";
 import "@/app/dashboard/follow-ups/follow-ups.css";
@@ -170,67 +172,59 @@ export default function FollowUpsContent() {
   return (
     <div className="follow-ups-content">
       <div className="header">
-        <h1 className="title">Follow-ups</h1>        <div className="actions">
-          <div className="filter-actions">
+        <h1 className="title">Follow-ups</h1>        <div className="actions">          <div className="filter-actions">
             <button 
               className={`filter-btn ${filter === 'upcoming' ? 'active' : ''}`}
               onClick={() => setFilter('upcoming')}
             >
-              <Clock size={18} />
-              Upcoming
+              <Clock size={16} />
+              <span>Upcoming</span>
             </button>
             <button 
               className={`filter-btn ${filter === 'completed' ? 'active' : ''}`}
               onClick={() => setFilter('completed')}
             >
-              <Check size={18} />
-              Completed
+              <Check size={16} />
+              <span>Completed</span>
             </button>
             <button 
               className={`filter-btn ${filter === 'all' ? 'active' : ''}`}
               onClick={() => setFilter('all')}
             >
-              <Filter size={18} />
-              All
+              <Filter size={16} />
+              <span>All</span>
             </button>
-            
-            {/* Broker filter dropdown */}
-            {brokers.length > 0 && (
-              <div className="broker-filter">
-                <select
-                  value={selectedBroker}
-                  onChange={(e) => setSelectedBroker(e.target.value)}
-                  className="broker-select"
-                >
-                  <option value="">All Brokers</option>
-                  {brokers.map((broker) => (
-                    <option key={broker.id} value={broker.id}>
-                      {broker.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
+            <div className="broker-filter">
+              <FilterDropdown
+                options={brokers}
+                value={selectedBroker}
+                onChange={setSelectedBroker}
+                placeholder="All Brokers"
+                icon={<User size={16} />}
+                isLoading={brokers.length === 0}
+              />
+            </div>
           </div>
           <button className="add-btn" onClick={handleAddFollowUp}>
-            <Plus size={18} />
-            Add Follow-Up
+            <Plus size={16} />
+            <span>Add Follow-Up</span>
           </button>
         </div>
       </div>
 
-      {followUps.length === 0 ? (
-        <div className="no-data">
+      {followUps.length === 0 ? (        <div className="no-data">
           <CalendarClock size={48} />
           <p>No follow-ups found</p>
-          <button className="add-btn" onClick={handleAddFollowUp}>Add Your First Follow-Up</button>
+          <button className="add-btn" onClick={handleAddFollowUp}>
+            <Plus size={16} />
+            <span>Add Your First Follow-Up</span>
+          </button>
         </div>
       ) : (
         <div className="follow-ups-list">
-          {followUps.map((followUp) => (
-            <div key={followUp.id} className={`follow-up-card ${followUp.completed ? 'completed' : ''}`}>
+          {followUps.map((followUp) => (            <div key={followUp.id} className={`follow-up-card ${followUp.completed ? 'completed' : ''}`}>
               <div className="follow-up-date">
-                <Calendar size={20} />
+                <Calendar size={18} />
                 <span>{format(new Date(followUp.reminderDate), 'MMM d, yyyy')}</span>
               </div>
               <div className="follow-up-details">
@@ -247,12 +241,12 @@ export default function FollowUpsContent() {
                     className="complete-btn"
                     onClick={() => markAsCompleted(followUp.id)}
                   >
-                    <Check size={18} />
-                    Mark Complete
+                    <Check size={16} />
+                    <span>Mark Complete</span>
                   </button>
                 )}
                 <button className="more-btn">
-                  <MoreVertical size={18} />
+                  <MoreVertical size={16} />
                 </button>
               </div>
             </div>

@@ -5,6 +5,7 @@ import { prisma } from '@/lib/prisma'
 
 // GET /api/users/subbrokers
 // Fetch all subbrokers for the current lead broker
+// For super admin, can filter by companyId
 export async function GET(request: Request) {
   try {
     const session = await getServerSession(authOptions)
@@ -16,32 +17,51 @@ export async function GET(request: Request) {
       )
     }
 
-    // Only lead brokers should be able to access this endpoint
-    if (session.user.role !== 'LEAD_BROKER') {
+    // Get query params
+    const { searchParams } = new URL(request.url);
+    const companyId = searchParams.get('companyId');
+    
+    // Check access based on role
+    // Allow either lead brokers or super admins with companyId
+    const isSuperAdmin = session.user.role === 'SUPER_ADMIN';
+    const isLeadBroker = session.user.role === 'LEAD_BROKER';
+    
+    if (!isLeadBroker && !(isSuperAdmin && companyId)) {
       return NextResponse.json(
-        { error: 'Forbidden. Only lead brokers can access this information.' },
+        { error: 'Forbidden. Only lead brokers or super admins with companyId can access this information.' },
         { status: 403 }
       )
     }
 
-    // Get current user (lead broker)
-    const currentUser = await prisma.user.findUnique({
-      where: { phone: session.user.phone }
-    })
+    // Build the query based on the role
+    let whereClause: any = {
+      role: 'SUB_BROKER',
+    };
+    
+    if (isLeadBroker) {
+      // Get current user (lead broker)
+      const currentUser = await prisma.user.findUnique({
+        where: { phone: session.user.phone }
+      });
 
-    if (!currentUser) {
-      return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
-      )
+      if (!currentUser) {
+        return NextResponse.json(
+          { error: 'User not found' },
+          { status: 404 }
+        )
+      }
+      
+      // Filter by the lead broker's ID as manager
+      whereClause.managerId = currentUser.id;
+    } 
+    else if (isSuperAdmin && companyId) {
+      // For super admin, filter by the requested company
+      whereClause.companyId = companyId;
     }
 
-    // Get all subbrokers that report to this lead broker
+    // Get subbrokers based on the where clause
     const subbrokers = await prisma.user.findMany({
-      where: {
-        role: 'SUB_BROKER',
-        managerId: currentUser.id
-      },
+      where: whereClause,
       select: {
         id: true,
         name: true,

@@ -18,18 +18,35 @@ export async function GET(request: Request) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    // Extract ownerId from the request URL if provided
+    // Extract query parameters
     const { searchParams } = new URL(request.url);
     const ownerId = searchParams.get('ownerId');
+    const companyId = searchParams.get('companyId'); // New parameter for filtering by company
     
     console.log("Session found:", {
       userId: session.user.id,
       companyId: session.user.companyId,
       role: session.user.role,
-      requestedOwnerId: ownerId
-    });    const leads = await prisma.lead.findMany({
+      requestedOwnerId: ownerId,
+      requestedCompanyId: companyId
+    });
+
+    // Determine which company to filter by
+    let filterCompanyId: string | undefined;
+    
+    if (session.user.role === 'SUPER_ADMIN') {
+      // Super admins can filter by any company or view all companies
+      filterCompanyId = companyId || undefined; 
+    } else {
+      // Non-super admins are restricted to their own company
+      filterCompanyId = session.user.companyId;
+    }
+
+    const leads = await prisma.lead.findMany({
       where: {
-        companyId: session.user.companyId,
+        // Apply the company filter - for super admins this might be undefined (all companies)
+        ...(filterCompanyId ? { companyId: filterCompanyId } : {}),
+        
         // If ownerId is provided in the request, filter by that ownerId
         // Otherwise, for SUB_BROKER users, show only their own leads
         ...(ownerId ? 
@@ -71,16 +88,33 @@ export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions);
     
-    if (!session?.user?.id || !session?.user?.companyId) {
-      console.log("No session, user ID, or company ID found");
+    if (!session?.user?.id) {
+      console.log("No session or user ID found");
       return new NextResponse("Unauthorized", { status: 401 });
-    }    const data = await req.json();
-    const { name, phone, email, status, notes, assignedOwnerId } = data;
+    }
+    
+    const data = await req.json();
+    const { name, phone, email, status, notes, assignedOwnerId, companyId } = data;
 
     if (!name || !phone || !status) {
       return new NextResponse("Missing required fields", { status: 400 });
     }
 
+    // Determine company ID based on role
+    let leadCompanyId = session.user.companyId;
+    
+    // For SUPER_ADMIN, use the provided company ID
+    if (session.user.role === 'SUPER_ADMIN') {
+      if (!companyId) {
+        return new NextResponse("Super admin must specify a company ID", { status: 400 });
+      }
+      leadCompanyId = companyId;
+    } 
+    // For non-super admins, ensure they have a company assigned
+    else if (!leadCompanyId) {
+      return new NextResponse("User does not have a company assigned", { status: 400 });
+    }
+    
     // Determine owner based on user role and assignedOwnerId
     let ownerId = session.user.id; // Default owner is the current user
     
@@ -91,7 +125,7 @@ export async function POST(req: Request) {
         where: {
           id: assignedOwnerId,
           role: 'SUB_BROKER',
-          companyId: session.user.companyId
+          companyId: leadCompanyId
         }
       });
       
@@ -100,9 +134,7 @@ export async function POST(req: Request) {
       } else {
         return new NextResponse("Invalid assigned owner", { status: 400 });
       }
-    }
-
-    const lead = await prisma.lead.create({
+    }    const lead = await prisma.lead.create({
       data: {
         name,
         phone,
@@ -110,7 +142,7 @@ export async function POST(req: Request) {
         status,
         notes,
         ownerId: ownerId,
-        companyId: session.user.companyId
+        companyId: leadCompanyId
       },
       include: {
         company: {

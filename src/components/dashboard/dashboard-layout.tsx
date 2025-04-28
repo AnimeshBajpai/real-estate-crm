@@ -17,6 +17,7 @@ import {
 import { useState } from "react";
 import { signOut } from "next-auth/react";
 import "./dashboard-layout.css";
+import "@/app/dashboard/mobile-nav-fixes.css";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -47,11 +48,13 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isSidebarOpen]);
-  
-  // Close sidebar when changing routes on mobile
+    // Close sidebar when changing routes on mobile
   useEffect(() => {
     if (window.innerWidth < 1024) {
       setIsSidebarOpen(false);
+    } else {
+      // Force show the sidebar on desktop
+      setIsSidebarOpen(true);
     }
   }, [pathname]);
 
@@ -103,11 +106,20 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     return () => window.removeEventListener('resize', checkIfMobile);
   }, []);
 
+  // Set page-loaded class to trigger animations
+  useEffect(() => {
+    document.body.classList.add('page-loaded');
+    return () => {
+      document.body.classList.remove('page-loaded');
+    }
+  }, []);
+
   return (
-    <div className="dashboard-layout">
-      <button className="mobile-menu-button" onClick={toggleSidebar} aria-label="Toggle menu">
-        <Menu size={24} />
-      </button>
+    <div className="dashboard-layout">      {!isSidebarOpen && isMobile && (
+        <button className="mobile-menu-button" onClick={toggleSidebar} aria-label="Toggle menu">
+          <Menu size={24} />
+        </button>
+      )}
 
       <aside ref={sidebarRef} className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
         <div className="sidebar-header">
@@ -145,16 +157,18 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               <p className="user-name">{session?.user?.name}</p>
               <p className="user-role">{session?.user?.role}</p>
             </div>
-          </div>
-          <button className="logout-button" onClick={() => signOut()}>
+          </div>          <button 
+            className="logout-button" 
+            onClick={() => signOut({ callbackUrl: '/auth/signin' })}
+          >
             <LogOut size={20} />
             Sign Out
           </button>
         </div>
-      </aside>
-
-      <main className="dashboard-main">
-        {children}
+      </aside>      <main className="dashboard-main">
+        <div className="dashboard-content">
+          {children}
+        </div>
       </main>
     </div>
   );

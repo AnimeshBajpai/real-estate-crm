@@ -1,0 +1,207 @@
+/* Global styles for company detail page */
+.company-detail {
+  padding: 2rem;
+}
+
+/* Direct styling for shadcn components */
+.company-detail :is(div[class*="Card-"]) {
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.company-detail :is(div[class*="CardHeader-"]) {
+  padding: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.company-detail :is(h3[class*="CardTitle-"]) {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.company-detail :is(div[class*="CardContent-"]) {
+  padding: 1.25rem;
+}
+
+/* Direct styling for specific elements */
+.company-detail-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  margin-right: 1rem;
+  background-color: #f3f4f6;
+  border-radius: 0.5rem;
+  color: #6b7280;
+  transition: all 0.15s ease;
+}
+
+.back-link:hover {
+  background-color: #e5e7eb;
+  color: #111827;
+}
+
+.company-detail-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+/* Grid layout for info cards */
+.detail-cards-grid {
+  display: grid;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .detail-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Field styling */
+.field-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #6b7280;
+  margin-bottom: 0.25rem;
+}
+
+.field-value {
+  font-size: 1rem;
+  color: #111827;
+}
+
+/* Section styling */
+.detail-section {
+  margin-bottom: 2rem;
+}
+
+/* Employee list styling */
+.employee-list {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  .employee-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.employee-item {
+  display: flex;
+  align-items: center;
+  background-color: #f9fafb;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+}
+
+.employee-avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  background-color: #e5e7eb;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.75rem;
+  flex-shrink: 0;
+}
+
+.employee-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.employee-name {
+  font-weight: 500;
+  color: #111827;
+}
+
+.employee-role {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.employee-contact {
+  display: flex;
+  align-items: center;
+  font-size: 0.75rem;
+  color: #4b5563;
+  margin-top: 0.25rem;
+}
+
+.employee-contact svg {
+  margin-right: 0.25rem;
+}
+
+/* Lead list styling */
+.lead-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.lead-item {
+  padding: 1rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.lead-item:last-child {
+  border-bottom: none;
+}
+
+.lead-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.lead-name {
+  font-weight: 500;
+  color: #111827;
+}
+
+.lead-status {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  background-color: #e0f2fe;
+  color: #0369a1;
+}
+
+.lead-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.lead-detail {
+  display: flex;
+  align-items: center;
+}
+
+.lead-detail svg {
+  margin-right: 0.25rem;
+}

@@ -12,6 +12,7 @@ interface ReassignLeadModalProps {
   currentOwnerName: string;
   onClose: () => void;
   onLeadReassigned: () => void;
+  companyId?: string; // For super admin filtering
 }
 
 export function ReassignLeadModal({
@@ -20,7 +21,8 @@ export function ReassignLeadModal({
   currentOwnerId,
   currentOwnerName,
   onClose,
-  onLeadReassigned
+  onLeadReassigned,
+  companyId
 }: ReassignLeadModalProps) {
   const { data: session } = useSession();
   const [isLoading, setIsLoading] = useState(false);
@@ -28,14 +30,20 @@ export function ReassignLeadModal({
   const [error, setError] = useState("");
   const [subbrokers, setSubbrokers] = useState<Array<{ id: string, name: string }>>([]);
   const [selectedOwnerId, setSelectedOwnerId] = useState(currentOwnerId);
-  
-  useEffect(() => {
+    useEffect(() => {
     const fetchSubbrokers = async () => {
-      if (session?.user?.role !== 'LEAD_BROKER') return;
+      // Allow both lead brokers and super admins to fetch subbrokers
+      if (session?.user?.role !== 'LEAD_BROKER' && session?.user?.role !== 'SUPER_ADMIN') return;
       
       try {
         setIsLoadingSubbrokers(true);
-        const response = await fetch('/api/users/subbrokers', {
+        // Build the URL - for super admins, include companyId if provided
+        let url = '/api/users/subbrokers';
+        if (session.user.role === 'SUPER_ADMIN' && companyId) {
+          url += `?companyId=${companyId}`;
+        }
+        
+        const response = await fetch(url, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'

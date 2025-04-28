@@ -63,8 +63,7 @@ export async function POST(request: Request) {
 
     // Hash the password
     const hashedPassword = await hash(password, 10)
-    
-    // Special case for Lead Broker creating a Sub-broker
+      // Case 1: Lead Broker creating a Sub-broker
     if (role === 'SUB_BROKER' && session?.user?.role === 'LEAD_BROKER') {
       // Get the Lead Broker's information
       const leadBroker = await prisma.user.findUnique({
@@ -111,9 +110,56 @@ export async function POST(request: Request) {
       })
       
       return NextResponse.json(user)
+    }    // Case 2: Super Admin creating a Sub-broker for a specific company
+    if (role === 'SUB_BROKER' && session?.user?.role === 'SUPER_ADMIN' && companyId) {
+      // Verify the company exists
+      const company = await prisma.company.findUnique({
+        where: { id: companyId },
+        include: { leadBroker: true }
+      });
+      
+      if (!company) {
+        return NextResponse.json(
+          { error: 'Specified company not found' },
+          { status: 404 }
+        );
+      }
+      
+      if (!company.leadBroker) {
+        return NextResponse.json(
+          { error: 'Company has no lead broker assigned' },
+          { status: 400 }
+        );
+      }
+      
+      // Create the sub-broker with the company's lead broker as manager
+      const user = await prisma.user.create({
+        data: {
+          name,
+          phone,
+          password: hashedPassword,
+          role: 'SUB_BROKER',
+          managerId: company.leadBroker.id,
+          companyId: company.id
+        },
+        select: {
+          id: true,
+          name: true,
+          phone: true,
+          role: true,
+          company: {
+            select: {
+              id: true,
+              name: true
+            }
+          }
+        }
+      });
+      
+      return NextResponse.json(user);
     }
-
-    // Standard user creation for other cases
+    
+    // Case 3: Standard user creation for other cases
     const user = await prisma.user.create({
       data: {
         name,

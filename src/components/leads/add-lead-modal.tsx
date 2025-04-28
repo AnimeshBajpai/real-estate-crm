@@ -67,8 +67,7 @@ export function AddLeadModal({ isOpen, onClose, onSubmit }: AddLeadModalProps) {
 
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
-  };
-  const handleSubmit = async (e: React.FormEvent) => {
+  };  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setValidationErrors({});
@@ -78,7 +77,6 @@ export function AddLeadModal({ isOpen, onClose, onSubmit }: AddLeadModalProps) {
     }
 
     setIsSubmitting(true);
-
     try {
       // Only include assignedOwnerId if a value is selected and user is a Lead Broker
       const leadData = {
@@ -86,25 +84,9 @@ export function AddLeadModal({ isOpen, onClose, onSubmit }: AddLeadModalProps) {
         assignedOwnerId: session?.user?.role === 'LEAD_BROKER' && formData.assignedOwnerId ? formData.assignedOwnerId : undefined
       };
       
-      const response = await fetch("/api/leads", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || "Failed to create lead");
-      }
-
-      const data = await response.json();
-      setNotification({
-        type: "success",
-        message: "Lead created successfully!"
-      });
-      onSubmit(data);
+      // Pass the data to the parent component to handle the API call
+      // This prevents duplicate API calls since the parent already handles the API request
+      onSubmit(leadData);
       onClose();
     } catch (error) {
       const message = error instanceof Error ? error.message : "Failed to create lead";

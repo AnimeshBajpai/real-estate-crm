@@ -8,9 +8,10 @@ import "./add-subbroker-modal.css";
 interface AddSubbrokerModalProps {
   onClose: () => void;
   onSubbrokerAdded: () => void;
+  selectedCompanyId?: string; // Optional for super admins
 }
 
-export function AddSubbrokerModal({ onClose, onSubbrokerAdded }: AddSubbrokerModalProps) {
+export function AddSubbrokerModal({ onClose, onSubbrokerAdded, selectedCompanyId }: AddSubbrokerModalProps) {
   const { data: session } = useSession();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -49,18 +50,25 @@ export function AddSubbrokerModal({ onClose, onSubbrokerAdded }: AddSubbrokerMod
     try {
       setIsLoading(true);
       setError("");
+        // Prepare request body - include companyId for super admins
+      const requestBody: any = {
+        name: formData.name,
+        phone: formData.phone,
+        password: formData.password,
+        role: "SUB_BROKER"
+      };
+      
+      // If super admin is adding with a selected company
+      if (session?.user?.role === 'SUPER_ADMIN' && selectedCompanyId) {
+        requestBody.companyId = selectedCompanyId;
+      }
       
       const response = await fetch("/api/users", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({
-          name: formData.name,
-          phone: formData.phone,
-          password: formData.password,
-          role: "SUB_BROKER"
-        })
+        body: JSON.stringify(requestBody)
       });
       
       if (!response.ok) {
