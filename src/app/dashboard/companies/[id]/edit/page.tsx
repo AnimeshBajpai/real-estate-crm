@@ -35,7 +35,6 @@ interface LeadBroker {
 }
 
 export default function EditCompanyPage({ params }: { params: { id: string } }) {
-  const { id } = params;
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -55,12 +54,11 @@ export default function EditCompanyPage({ params }: { params: { id: string } }) 
       leadBrokerId: "",
     },
   });
-
   // Fetch company data
   useEffect(() => {
     const fetchCompany = async () => {
       try {
-        const response = await fetch(`/api/companies/${id}`);
+        const response = await fetch(`/api/companies/${params.id}`);
         if (!response.ok) {
           throw new Error(`Error ${response.status}: ${response.statusText}`);
         }
@@ -79,7 +77,7 @@ export default function EditCompanyPage({ params }: { params: { id: string } }) 
     };
 
     fetchCompany();
-  }, [id, reset]);
+  }, [params.id, reset]);
 
   // Fetch available lead brokers
   useEffect(() => {
@@ -102,13 +100,12 @@ export default function EditCompanyPage({ params }: { params: { id: string } }) 
       fetchLeadBrokers();
     }
   }, [company]);
-
   const onSubmit = async (data: FormValues) => {
     setIsSaving(true);
     setError(null);
 
     try {
-      const response = await fetch(`/api/companies/${id}`, {
+      const response = await fetch(`/api/companies/${params.id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -123,7 +120,7 @@ export default function EditCompanyPage({ params }: { params: { id: string } }) 
       }
 
       // Redirect to company details page
-      router.push(`/dashboard/companies/${id}`);
+      router.push(`/dashboard/companies/${params.id}`);
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
@@ -153,9 +150,8 @@ export default function EditCompanyPage({ params }: { params: { id: string } }) 
     );
   }
   return (
-    <div className="company-detail">
-      <div className="company-detail-header">
-        <Link href={`/dashboard/companies/${id}`} className="back-link">
+    <div className="company-detail">      <div className="company-detail-header">
+        <Link href={`/dashboard/companies/${params.id}`} className="back-link">
           <ChevronLeft className="h-5 w-5" />
         </Link>
         <h1 className="company-detail-title">Edit Company</h1>
@@ -213,10 +209,8 @@ export default function EditCompanyPage({ params }: { params: { id: string } }) 
                   {errors.leadBrokerId.message}
                 </p>
               )}
-            </div>
-
-            <div className="flex justify-end space-x-4 pt-4">
-              <Link href={`/dashboard/companies/${id}`}>
+            </div>            <div className="flex justify-end space-x-4 pt-4">
+              <Link href={`/dashboard/companies/${params.id}`}>
                 <Button type="button" variant="outline">
                   Cancel
                 </Button>

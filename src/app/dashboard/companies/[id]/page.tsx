@@ -3,18 +3,30 @@ import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Metadata } from "next";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/utils";
 import { prisma } from "@/lib/prisma";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ChevronLeft, Users, UserCircle, Phone, Mail, Building, Edit, Trash2 } from "lucide-react";
+import { Users, UserCircle, Phone, Mail, Building } from "lucide-react";
+import { CompanyActions } from "@/components/companies/company-actions";
+import { ErrorState } from "@/components/companies/error-state";
+import { ProfileButton } from "@/components/companies/profile-button";
+import { EmployeeActions } from "@/components/companies/employee-actions";
+import { LeadsViewButton } from "@/components/companies/leads-view-button";
+import { BackLink } from "@/components/companies/back-link";
 
 export const metadata: Metadata = {
   title: "Company Details | Real Estate CRM",
   description: "View and manage company details",
 };
 
-export default async function CompanyDetailPage({ params }: { params: { id: string } }) {
+export default async function CompanyDetailPage({
+  params,
+}: {
+  params: { id: string };
+}) {
+  // Get the ID as a string to avoid using params.id directly
+  const companyId = String(params.id);
+  
   const session = await getServerSession(authOptions);
   
   if (!session?.user) {
@@ -25,12 +37,10 @@ export default async function CompanyDetailPage({ params }: { params: { id: stri
   if (session.user.role !== "SUPER_ADMIN") {
     redirect("/dashboard");
   }
-
-  const { id } = params;
   
   try {
     const company = await prisma.company.findUnique({
-      where: { id },
+      where: { id: companyId },
       include: {
         leadBroker: true,
         employees: {
@@ -55,21 +65,11 @@ export default async function CompanyDetailPage({ params }: { params: { id: stri
         }
       }
     });    if (!company) {
-      return (
-        <div className="error-container">
-          <h2 className="error-title">Company Not Found</h2>
-          <p className="error-message">The company you're looking for doesn't exist or has been deleted.</p>
-          <Link href="/dashboard/companies">
-            <Button>Back to Companies</Button>
-          </Link>
-        </div>
-      );
+      return <ErrorState message="The company you're looking for doesn't exist or has been deleted." />;
     }    return (
       <div className="company-detail">
         <div className="company-detail-header">
-          <Link href="/dashboard/companies" className="back-link">
-            <ChevronLeft className="h-5 w-5" />
-          </Link>
+          <BackLink />
           <h1 className="company-detail-title">{company.name}</h1>
         </div>
 
@@ -87,23 +87,10 @@ export default async function CompanyDetailPage({ params }: { params: { id: stri
               <div>
                 <p className="field-label">Created</p>
                 <p className="field-value">{formatDate(company.createdAt)}</p>
-              </div>
-              <div>
+              </div>              <div>
                 <p className="field-label">Last Updated</p>
                 <p className="field-value">{formatDate(company.updatedAt)}</p>
-              </div>
-              <div className="pt-4 flex justify-end space-x-2">
-                <Link href={`/dashboard/companies/${id}/edit`}>
-                  <Button variant="outline" size="sm" className="flex items-center">
-                    <Edit className="mr-1 h-4 w-4" />
-                    Edit
-                  </Button>
-                </Link>
-                <Button variant="destructive" size="sm" className="flex items-center">
-                  <Trash2 className="mr-1 h-4 w-4" />
-                  Delete
-                </Button>
-              </div>
+              </div>              <CompanyActions companyId={companyId} />
             </CardContent>
           </Card>          <Card className="bg-white shadow-sm border border-gray-100" style={{backgroundColor: 'white', border: '1px solid #e5e7eb', borderRadius: '0.5rem', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'}}>
             <CardHeader className="pb-3" style={{padding: '1.25rem', paddingBottom: '0.75rem', borderBottom: '1px solid #f3f4f6'}}>
@@ -123,25 +110,17 @@ export default async function CompanyDetailPage({ params }: { params: { id: stri
               <div>
                 <p className="field-label">Role</p>
                 <p className="field-value">Lead Broker</p>
-              </div>
-              <div className="pt-4">
-                <Link href={`/dashboard/users/${company.leadBroker.id}`}>
-                  <Button variant="outline" size="sm">View Profile</Button>
-                </Link>
-              </div>
+              </div>              <ProfileButton userId={company.leadBroker.id} />
             </CardContent>
           </Card>
         </div>        <div className="detail-section">          <Card className="bg-white shadow-sm border border-gray-100" style={{backgroundColor: 'white', border: '1px solid #e5e7eb', borderRadius: '0.5rem', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'}}>
             <CardHeader className="pb-3" style={{padding: '1.25rem', paddingBottom: '0.75rem', borderBottom: '1px solid #f3f4f6'}}>
-              <CardTitle className="detail-section-title" style={{fontSize: '1.125rem', fontWeight: '600', margin: 0, color: '#111827'}}>
-                <div className="flex items-center justify-between w-full">
+              <CardTitle className="detail-section-title" style={{fontSize: '1.125rem', fontWeight: '600', margin: 0, color: '#111827'}}>                <div className="flex items-center justify-between w-full">
                   <div className="flex items-center">
                     <Users className="icon h-5 w-5 text-gray-600" />
                     <span className="ml-2">Employees ({company._count.employees})</span>
                   </div>
-                  <Link href={`/dashboard/companies/${id}/employees/add`}>
-                    <Button size="sm">Add Employee</Button>
-                  </Link>
+                  <EmployeeActions companyId={companyId} />
                 </div>
               </CardTitle>
             </CardHeader>
@@ -168,28 +147,18 @@ export default async function CompanyDetailPage({ params }: { params: { id: stri
                     </div>
                   ))}
                 </div>
-              )}
-              {company.employees.length > 10 && (
-                <div className="mt-4 text-center">
-                  <Link href={`/dashboard/companies/${id}/employees`}>
-                    <Button variant="outline">View All Employees</Button>
-                  </Link>
-                </div>
-              )}
+              )}              {/* Removed "View All Employees" button since it's now in the EmployeeActions component */}
             </CardContent>
           </Card>
         </div>        <div className="detail-section">
           <Card className="bg-white shadow-sm border border-gray-100" style={{backgroundColor: 'white', border: '1px solid #e5e7eb', borderRadius: '0.5rem', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'}}>
             <CardHeader className="pb-3" style={{padding: '1.25rem', paddingBottom: '0.75rem', borderBottom: '1px solid #f3f4f6'}}>
-              <CardTitle className="detail-section-title" style={{fontSize: '1.125rem', fontWeight: '600', margin: 0, color: '#111827'}}>
-                <div className="flex items-center justify-between w-full">
+              <CardTitle className="detail-section-title" style={{fontSize: '1.125rem', fontWeight: '600', margin: 0, color: '#111827'}}>                <div className="flex items-center justify-between w-full">
                   <div className="flex items-center">
                     <Users className="icon h-5 w-5 text-gray-600" />
                     <span className="ml-2">Recent Leads ({company._count.leads})</span>
                   </div>
-                  <Link href={`/dashboard/leads`}>
-                    <Button size="sm">View All Leads</Button>
-                  </Link>
+                  <LeadsViewButton />
                 </div>
               </CardTitle>
             </CardHeader>
@@ -234,18 +203,7 @@ export default async function CompanyDetailPage({ params }: { params: { id: stri
       </div>
     );  } catch (error) {
     console.error("Error fetching company details:", error);
-    return (
-      <div className="error-container">
-        <h2 className="error-title">Error Loading Company Details</h2>
-        <p className="error-message">There was an error loading the company details.</p>
-        <p className="error-details">Technical details: {error instanceof Error ? error.message : String(error)}</p>
-        <div className="flex gap-4">
-          <Link href="/dashboard/companies">
-            <Button>Back to Companies</Button>
-          </Link>
-          <Button onClick={() => window.location.reload()}>Try Again</Button>
-        </div>
-      </div>
-    );
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    return <ErrorState message={`Failed to load company details: ${errorMessage}`} />;
   }
 }

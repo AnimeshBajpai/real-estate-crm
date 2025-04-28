@@ -37,22 +37,34 @@
   border-bottom: 1px solid #e5e7eb;
 }
 
-.back-link {
+.back-link-container {
+  display: flex;
+  align-items: center;
+  margin-right: 1rem;
+}
+
+.back-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 2.5rem;
   height: 2.5rem;
-  margin-right: 1rem;
   background-color: #f3f4f6;
   border-radius: 0.5rem;
   color: #6b7280;
   transition: all 0.15s ease;
+  margin-right: 0.5rem;
 }
 
-.back-link:hover {
+.back-button:hover {
   background-color: #e5e7eb;
   color: #111827;
+}
+
+.back-text {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #6b7280;
 }
 
 .company-detail-title {
