@@ -1,0 +1,72 @@
+/* Additional responsive fixes for landing page */
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+/* Prevent horizontal overflow */
+img, picture, video, canvas, svg {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Container fixes */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  box-sizing: border-box;
+}
+
+/* Dashboard preview image */
+.dashboard-preview {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Feature image fixes */
+.feature-img {
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto;
+}
+
+/* Button fixes for mobile */
+@media (max-width: 640px) {
+  .cta-button, .learn-more-button {
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .hero-cta {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .hero-cta a {
+    width: 100%;
+    display: block;
+  }
+}
+
+/* Extra small screen fixes */
+@media (max-width: 380px) {
+  .hero-title {
+    font-size: 1.75rem;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+  }
+
+  .feature-title {
+    font-size: 1.5rem;
+  }
+}

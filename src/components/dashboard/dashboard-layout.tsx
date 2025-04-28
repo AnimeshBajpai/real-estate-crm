@@ -159,7 +159,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             </div>
           </div>          <button 
             className="logout-button" 
-            onClick={() => signOut({ callbackUrl: '/auth/signin' })}
+            onClick={() => signOut({ callbackUrl: '/home' })}
           >
             <LogOut size={20} />
             Sign Out

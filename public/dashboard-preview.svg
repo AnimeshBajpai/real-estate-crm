@@ -1,89 +1,154 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
-  <!-- Dashboard background -->
-  <rect width="800" height="500" fill="#f8fafc" rx="10" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" width="900" height="600">
+  <!-- Dashboard Background -->
+  <rect width="900" height="600" fill="#f8fafc" rx="8" />
   
-  <!-- Dashboard header -->
-  <rect x="0" y="0" width="800" height="60" fill="#ffffff" />
-  <rect x="20" y="15" width="120" height="30" fill="#2563eb" rx="5" />
+  <!-- Main Content Area -->
+  <rect x="220" y="10" width="670" height="580" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" rx="8" />
   
-  <!-- Left sidebar -->
-  <rect x="0" y="60" width="200" height="440" fill="#ffffff" />
+  <!-- Sidebar -->
+  <rect x="10" y="10" width="200" height="580" fill="#1e293b" rx="8" />
   
-  <!-- Sidebar menu items -->
-  <rect x="20" y="100" width="160" height="40" fill="#eff6ff" rx="5" />
-  <rect x="30" y="115" width="20" height="10" fill="#3b82f6" />
-  <rect x="60" y="115" width="100" height="10" fill="#3b82f6" />
+  <!-- Sidebar Logo Area -->
+  <rect x="25" y="30" width="170" height="40" rx="4" fill="#1e293b" />
+  <circle cx="45" cy="50" r="12" fill="#3b82f6" />
+  <text x="70" y="55" font-family="Arial" font-size="14" font-weight="bold" fill="#ffffff">LeadPro CRM</text>
   
-  <rect x="20" y="150" width="160" height="40" fill="#f8fafc" rx="5" />
-  <rect x="30" y="165" width="20" height="10" fill="#64748b" />
-  <rect x="60" y="165" width="80" height="10" fill="#64748b" />
+  <!-- Sidebar Menu Items -->
+  <rect x="25" y="100" width="170" height="40" rx="4" fill="#2563eb" />
+  <rect x="35" y="115" width="16" height="16" rx="2" fill="#ffffff" />
+  <text x="65" y="125" font-family="Arial" font-size="12" fill="#ffffff">Dashboard</text>
   
-  <rect x="20" y="200" width="160" height="40" fill="#f8fafc" rx="5" />
-  <rect x="30" y="215" width="20" height="10" fill="#64748b" />
-  <rect x="60" y="215" width="90" height="10" fill="#64748b" />
+  <rect x="25" y="150" width="170" height="40" rx="4" fill="#1e293b" />
+  <rect x="35" y="165" width="16" height="16" rx="2" fill="#64748b" />
+  <text x="65" y="175" font-family="Arial" font-size="12" fill="#64748b">Leads</text>
   
-  <rect x="20" y="250" width="160" height="40" fill="#f8fafc" rx="5" />
-  <rect x="30" y="265" width="20" height="10" fill="#64748b" />
-  <rect x="60" y="265" width="70" height="10" fill="#64748b" />
+  <rect x="25" y="200" width="170" height="40" rx="4" fill="#1e293b" />
+  <rect x="35" y="215" width="16" height="16" rx="2" fill="#64748b" />
+  <text x="65" y="225" font-family="Arial" font-size="12" fill="#64748b">Follow Ups</text>
   
-  <!-- Main content area -->
-  <rect x="220" y="80" width="560" height="40" fill="#ffffff" rx="5" />
-  <rect x="240" y="95" width="200" height="15" fill="#1e293b" />
+  <rect x="25" y="250" width="170" height="40" rx="4" fill="#1e293b" />
+  <rect x="35" y="265" width="16" height="16" rx="2" fill="#64748b" />
+  <text x="65" y="275" font-family="Arial" font-size="12" fill="#64748b">Companies</text>
   
-  <!-- Stats cards -->
-  <rect x="220" y="140" width="175" height="100" fill="#ffffff" rx="5" stroke="#e2e8f0" stroke-width="1" />
-  <rect x="235" y="155" width="100" height="15" fill="#64748b" />
-  <rect x="235" y="180" width="60" height="25" fill="#2563eb" />
-  <rect x="235" y="215" width="80" height="10" fill="#94a3b8" />
+  <!-- User Info -->
+  <circle cx="45" cy="530" r="15" fill="#64748b" />
+  <text x="70" y="525" font-family="Arial" font-size="11" fill="#ffffff">John Doe</text>
+  <text x="70" y="540" font-family="Arial" font-size="9" fill="#94a3b8">Lead Broker</text>
   
-  <rect x="410" y="140" width="175" height="100" fill="#ffffff" rx="5" stroke="#e2e8f0" stroke-width="1" />
-  <rect x="425" y="155" width="100" height="15" fill="#64748b" />
-  <rect x="425" y="180" width="80" height="25" fill="#10b981" />
-  <rect x="425" y="215" width="80" height="10" fill="#94a3b8" />
+  <rect x="25" y="560" width="170" height="1" fill="#475569" />
+  <rect x="35" y="570" width="16" height="16" rx="2" fill="#64748b" />
+  <text x="65" y="580" font-family="Arial" font-size="11" fill="#94a3b8">Sign Out</text>
   
-  <rect x="600" y="140" width="180" height="100" fill="#ffffff" rx="5" stroke="#e2e8f0" stroke-width="1" />
-  <rect x="615" y="155" width="100" height="15" fill="#64748b" />
-  <rect x="615" y="180" width="50" height="25" fill="#f59e0b" />
-  <rect x="615" y="215" width="80" height="10" fill="#94a3b8" />
+  <!-- Header Area -->
+  <rect x="220" y="10" width="670" height="60" fill="#ffffff" rx="8" />
+  <text x="240" y="45" font-family="Arial" font-size="18" font-weight="bold" fill="#0f172a">Dashboard Overview</text>
   
-  <!-- Table/List -->
-  <rect x="220" y="260" width="560" height="220" fill="#ffffff" rx="5" stroke="#e2e8f0" stroke-width="1" />
-  <rect x="240" y="280" width="150" height="15" fill="#1e293b" />
+  <!-- Welcome message -->
+  <text x="240" y="90" font-family="Arial" font-size="16" fill="#475569">Welcome back, John! Here's your latest activity</text>
   
-  <!-- Table header -->
-  <rect x="240" y="310" width="520" height="30" fill="#f8fafc" />
-  <rect x="250" y="320" width="80" height="10" fill="#64748b" />
-  <rect x="350" y="320" width="80" height="10" fill="#64748b" />
-  <rect x="450" y="320" width="80" height="10" fill="#64748b" />
-  <rect x="550" y="320" width="80" height="10" fill="#64748b" />
-  <rect x="650" y="320" width="80" height="10" fill="#64748b" />
+  <!-- Main Stats Cards -->
+  <rect x="240" y="110" width="190" height="120" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" />
+  <text x="260" y="140" font-family="Arial" font-size="12" fill="#64748b">TOTAL LEADS</text>
+  <text x="260" y="170" font-family="Arial" font-size="24" font-weight="bold" fill="#0f172a">125</text>
+  <rect x="260" y="185" width="150" height="6" rx="3" fill="#f1f5f9" />
+  <rect x="260" y="185" width="90" height="6" rx="3" fill="#3b82f6" />
+  <text x="260" y="205" font-family="Arial" font-size="11" fill="#22c55e">↑ 12% from last month</text>
   
-  <!-- Table rows -->
-  <line x1="240" y1="340" x2="760" y2="340" stroke="#e2e8f0" stroke-width="1" />
-  <rect x="250" y="350" width="90" height="10" fill="#1e293b" />
-  <rect x="350" y="350" width="60" height="10" fill="#64748b" />
-  <circle cx="460" cy="355" r="5" fill="#10b981" />
-  <rect x="550" y="350" width="40" height="10" fill="#64748b" />
-  <rect x="650" y="350" width="30" height="10" fill="#3b82f6" />
+  <rect x="450" y="110" width="190" height="120" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" />
+  <text x="470" y="140" font-family="Arial" font-size="12" fill="#64748b">CONVERSION RATE</text>
+  <text x="470" y="170" font-family="Arial" font-size="24" font-weight="bold" fill="#0f172a">32%</text>
+  <rect x="470" y="185" width="150" height="6" rx="3" fill="#f1f5f9" />
+  <rect x="470" y="185" width="115" height="6" rx="3" fill="#3b82f6" />
+  <text x="470" y="205" font-family="Arial" font-size="11" fill="#22c55e">↑ 5% from last month</text>
   
-  <line x1="240" y1="370" x2="760" y2="370" stroke="#e2e8f0" stroke-width="1" />
-  <rect x="250" y="380" width="80" height="10" fill="#1e293b" />
-  <rect x="350" y="380" width="70" height="10" fill="#64748b" />
-  <circle cx="460" cy="385" r="5" fill="#f59e0b" />
-  <rect x="550" y="380" width="40" height="10" fill="#64748b" />
-  <rect x="650" y="380" width="30" height="10" fill="#3b82f6" />
+  <rect x="660" y="110" width="190" height="120" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" />
+  <text x="680" y="140" font-family="Arial" font-size="12" fill="#64748b">FOLLOW UPS</text>
+  <text x="680" y="170" font-family="Arial" font-size="24" font-weight="bold" fill="#0f172a">42</text>
+  <rect x="680" y="185" width="150" height="6" rx="3" fill="#f1f5f9" />
+  <rect x="680" y="185" width="75" height="6" rx="3" fill="#3b82f6" />
+  <text x="680" y="205" font-family="Arial" font-size="11" fill="#ef4444">↓ 3% from last month</text>
   
-  <line x1="240" y1="400" x2="760" y2="400" stroke="#e2e8f0" stroke-width="1" />
-  <rect x="250" y="410" width="85" height="10" fill="#1e293b" />
-  <rect x="350" y="410" width="65" height="10" fill="#64748b" />
-  <circle cx="460" cy="415" r="5" fill="#ef4444" />
-  <rect x="550" y="410" width="40" height="10" fill="#64748b" />
-  <rect x="650" y="410" width="30" height="10" fill="#3b82f6" />
+  <!-- Recent Activity / Chart Section -->
+  <rect x="240" y="250" width="400" height="300" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" />
+  <text x="260" y="280" font-family="Arial" font-size="14" font-weight="bold" fill="#0f172a">Lead Activity</text>
+
+  <!-- Line Chart -->
+  <!-- Chart axis -->
+  <line x1="260" y1="470" x2="620" y2="470" stroke="#e2e8f0" stroke-width="1" />
+  <line x1="260" y1="320" x2="260" y2="470" stroke="#e2e8f0" stroke-width="1" />
   
-  <line x1="240" y1="430" x2="760" y2="430" stroke="#e2e8f0" stroke-width="1" />
-  <rect x="250" y="440" width="75" height="10" fill="#1e293b" />
-  <rect x="350" y="440" width="55" height="10" fill="#64748b" />
-  <circle cx="460" cy="445" r="5" fill="#10b981" />
-  <rect x="550" y="440" width="40" height="10" fill="#64748b" />
-  <rect x="650" y="440" width="30" height="10" fill="#3b82f6" />
+  <!-- X-axis labels -->
+  <text x="295" y="485" font-family="Arial" font-size="10" fill="#64748b" text-anchor="middle">Jan</text>
+  <text x="355" y="485" font-family="Arial" font-size="10" fill="#64748b" text-anchor="middle">Feb</text>
+  <text x="415" y="485" font-family="Arial" font-size="10" fill="#64748b" text-anchor="middle">Mar</text>
+  <text x="475" y="485" font-family="Arial" font-size="10" fill="#64748b" text-anchor="middle">Apr</text>
+  <text x="535" y="485" font-family="Arial" font-size="10" fill="#64748b" text-anchor="middle">May</text>
+  <text x="595" y="485" font-family="Arial" font-size="10" fill="#64748b" text-anchor="middle">Jun</text>
+  
+  <!-- Y-axis labels -->
+  <text x="250" y="330" font-family="Arial" font-size="9" fill="#64748b" text-anchor="end">100</text>
+  <text x="250" y="370" font-family="Arial" font-size="9" fill="#64748b" text-anchor="end">75</text>
+  <text x="250" y="410" font-family="Arial" font-size="9" fill="#64748b" text-anchor="end">50</text>
+  <text x="250" y="450" font-family="Arial" font-size="9" fill="#64748b" text-anchor="end">25</text>
+  <text x="250" y="470" font-family="Arial" font-size="9" fill="#64748b" text-anchor="end">0</text>
+  
+  <!-- Grid lines -->
+  <line x1="260" y1="330" x2="620" y2="330" stroke="#e2e8f0" stroke-width="0.5" stroke-dasharray="4" />
+  <line x1="260" y1="370" x2="620" y2="370" stroke="#e2e8f0" stroke-width="0.5" stroke-dasharray="4" />
+  <line x1="260" y1="410" x2="620" y2="410" stroke="#e2e8f0" stroke-width="0.5" stroke-dasharray="4" />
+  <line x1="260" y1="450" x2="620" y2="450" stroke="#e2e8f0" stroke-width="0.5" stroke-dasharray="4" />
+  
+  <!-- Chart data - New Leads (Blue) -->
+  <path d="M295 410 L355 380 L415 420 L475 370 L535 340 L595 320" stroke="#3b82f6" stroke-width="2" fill="none" />
+  <circle cx="295" cy="410" r="4" fill="#3b82f6" />
+  <circle cx="355" cy="380" r="4" fill="#3b82f6" />
+  <circle cx="415" cy="420" r="4" fill="#3b82f6" />
+  <circle cx="475" cy="370" r="4" fill="#3b82f6" />
+  <circle cx="535" cy="340" r="4" fill="#3b82f6" />
+  <circle cx="595" cy="320" r="4" fill="#3b82f6" />
+  
+  <!-- Chart data - Conversions (Green) -->
+  <path d="M295 450 L355 430 L415 440 L475 410 L535 415 L595 390" stroke="#22c55e" stroke-width="2" fill="none" />
+  <circle cx="295" cy="450" r="4" fill="#22c55e" />
+  <circle cx="355" cy="430" r="4" fill="#22c55e" />
+  <circle cx="415" cy="440" r="4" fill="#22c55e" />
+  <circle cx="475" cy="410" r="4" fill="#22c55e" />
+  <circle cx="535" cy="415" r="4" fill="#22c55e" />
+  <circle cx="595" cy="390" r="4" fill="#22c55e" />
+  
+  <!-- Legend -->
+  <circle cx="275" cy="305" r="4" fill="#3b82f6" />
+  <text x="285" y="308" font-family="Arial" font-size="10" fill="#64748b">New Leads</text>
+  <circle cx="345" cy="305" r="4" fill="#22c55e" />
+  <text x="355" y="308" font-family="Arial" font-size="10" fill="#64748b">Conversions</text>
+  
+  <!-- Upcoming Follow-ups -->
+  <rect x="660" y="250" width="190" height="300" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" />
+  <text x="680" y="280" font-family="Arial" font-size="14" font-weight="bold" fill="#0f172a">Upcoming Follow-ups</text>
+  
+  <!-- Follow-up items -->
+  <rect x="680" y="300" width="150" height="1" fill="#e2e8f0" />
+  
+  <text x="680" y="320" font-family="Arial" font-size="11" font-weight="bold" fill="#0f172a">John Smith - Townhouse</text>
+  <text x="680" y="335" font-family="Arial" font-size="10" fill="#64748b">Call about property tour</text>
+  <rect x="680" y="345" width="40" height="18" rx="9" fill="#bfdbfe" />
+  <text x="700" y="358" font-family="Arial" font-size="9" fill="#1d4ed8">Today</text>
+  <rect x="680" y="370" width="150" height="1" fill="#e2e8f0" />
+  
+  <text x="680" y="390" font-family="Arial" font-size="11" font-weight="bold" fill="#0f172a">Sarah Johnson - Condo</text>
+  <text x="680" y="405" font-family="Arial" font-size="10" fill="#64748b">Send price updates</text>
+  <rect x="680" y="415" width="65" height="18" rx="9" fill="#fef3c7" />
+  <text x="700" y="428" font-family="Arial" font-size="9" fill="#b45309">Tomorrow</text>
+  <rect x="680" y="440" width="150" height="1" fill="#e2e8f0" />
+  
+  <text x="680" y="460" font-family="Arial" font-size="11" font-weight="bold" fill="#0f172a">Alex Wong - Villa</text>
+  <text x="680" y="475" font-family="Arial" font-size="10" fill="#64748b">Follow up on offer</text>
+  <rect x="680" y="485" width="50" height="18" rx="9" fill="#dcfce7" />
+  <text x="700" y="498" font-family="Arial" font-size="9" fill="#166534">May 3</text>
+  <rect x="680" y="510" width="150" height="1" fill="#e2e8f0" />
+  
+  <text x="680" y="530" font-family="Arial" font-size="11" font-weight="bold" fill="#0f172a">Maria Garcia - Duplex</text>
+  <text x="680" y="545" font-family="Arial" font-size="10" fill="#64748b">Schedule home inspection</text>
+  <rect x="680" y="555" width="50" height="18" rx="9" fill="#dcfce7" />
+  <text x="700" y="568" font-family="Arial" font-size="9" fill="#166534">May 5</text>
 </svg>

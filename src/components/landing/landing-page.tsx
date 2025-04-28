@@ -8,6 +8,7 @@ import "./header.css";
 import "./footer.css";
 import "./home-page.css";
 import "./landing-layout.css";
+import "./responsive-fixes.css";
 
 export default function LandingPage() {
   return (

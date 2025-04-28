@@ -66,10 +66,11 @@ export function HomePage() {
             <Image
               src="/dashboard-preview.svg"
               alt="Dashboard Preview"
-              width={650}
-              height={400}
+              width={900}
+              height={600}
               className="dashboard-preview"
               priority
+              style={{ maxWidth: '100%', height: 'auto' }}
             />
           </div>
         </div>
@@ -129,13 +130,13 @@ export function HomePage() {
                       ))}
                     </ul>
                   </div>                  <div className="feature-image">
-                    <div className="feature-image-placeholder">
-                      <Image
+                    <div className="feature-image-placeholder">                      <Image
                         src={`/feature-${feature.id}.svg`}
                         alt={feature.title}
                         width={500}
                         height={300}
                         className="feature-img"
+                        style={{ maxWidth: '100%', height: 'auto' }}
                       />
                     </div>
                   </div>

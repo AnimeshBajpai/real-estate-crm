@@ -110,15 +110,42 @@
   
   .footer-links {
     grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+  
+  .footer-group {
+    padding-right: 1rem;
+  }
+  
+  .landing-footer {
+    padding: 3rem 1rem 2rem;
   }
 }
 
 @media (max-width: 480px) {
   .footer-links {
     grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
   
   .landing-footer {
-    padding: 3rem 0 1.5rem;
+    padding: 2.5rem 1rem 1.5rem;
+  }
+  
+  .footer-logo-link {
+    align-self: center;
+  }
+  
+  .footer-description {
+    text-align: center;
+  }
+  
+  .social-links {
+    justify-content: center;
+  }
+  
+  .copyright {
+    text-align: center;
+    padding: 0 1rem;
   }
 }

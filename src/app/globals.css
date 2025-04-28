@@ -17,7 +17,23 @@
   }
 }
 
-/* Mobile optimizations */
+/* Global resets for mobile optimizations */
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+/* Prevent horizontal overflow */
+img, picture, video, canvas, svg {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
 
 /* Make inputs more touch-friendly on mobile */
 input, select, textarea, button {

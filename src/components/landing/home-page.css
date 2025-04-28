@@ -34,11 +34,14 @@
   padding: 6rem 0;
   background: linear-gradient(to bottom, #f8fafc, #ffffff);
   overflow: hidden;
+  position: relative;
 }
 
 .hero-content {
   max-width: 600px;
   margin-bottom: 3rem;
+  position: relative;
+  z-index: 2;
 }
 
 .hero-title {
@@ -112,6 +115,12 @@
   border: 1px solid var(--border-color);
   max-width: 100%;
   height: auto;
+  transform: perspective(1000px) rotateY(-5deg) rotateX(5deg);
+  transition: transform 0.3s ease;
+}
+
+.dashboard-preview:hover {
+  transform: perspective(1000px) rotateY(-2deg) rotateX(2deg);
 }
 
 /* Trust Section */
@@ -274,12 +283,17 @@
 
 .feature-image-placeholder {
   width: 100%;
-  height: 300px;
+  max-width: 100%;
+  height: auto;
+  min-height: 200px;
   background-color: var(--light-bg);
   border-radius: var(--radius);
   border: 1px solid var(--border-color);
   overflow: hidden;
   box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Testimonials Section */
@@ -304,6 +318,9 @@
   box-shadow: var(--shadow);
   border: 1px solid var(--border-color);
   position: relative;
+  max-width: 100%;
+  overflow: hidden;
+  word-break: break-word;
 }
 
 .quote-mark {
@@ -405,19 +422,36 @@
 }
 
 @media (max-width: 768px) {
+  .hero-section {
+    padding: 3rem 0;
+  }
+
   .hero-content {
     text-align: center;
     margin-left: auto;
     margin-right: auto;
+    max-width: 100%;
   }
   
   .hero-cta {
     justify-content: center;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+  }
+  
+  .hero-cta a {
+    width: 100%;
+  }
+  
+  .hero-cta button {
+    width: 100%;
   }
   
   .tab-panel {
     grid-template-columns: 1fr;
     text-align: center;
+    padding: 0 1rem;
   }
   
   .feature-benefits {
@@ -429,21 +463,58 @@
   }
   
   .cta-card {
-    padding: 2rem;
+    padding: 2rem 1rem;
+    margin: 0 1rem;
+  }
+  
+  .container {
+    padding: 0 1rem;
   }
 }
 
 @media (max-width: 640px) {
   .hero-title {
     font-size: 2rem;
+    word-wrap: break-word;
   }
   
   .section-title {
     font-size: 1.75rem;
+    padding: 0 1rem;
   }
   
   .testimonials-grid {
     grid-template-columns: 1fr;
+    padding: 0 1rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1rem;
+    padding: 0 0.5rem;
+  }
+  
+  .tab-headers {
+    flex-direction: column;
+    align-items: center;
+    padding: 0 1rem;
+  }
+  
+  .tab-button {
+    width: 100%;
+    max-width: 280px;
+  }
+  
+  .feature-image {
+    padding: 0 1rem;
+  }
+  
+  .company-logos {
+    gap: 1rem;
+  }
+  
+  .company-logo-placeholder {
+    width: 80px;
+    height: 40px;
   }
 }
 
