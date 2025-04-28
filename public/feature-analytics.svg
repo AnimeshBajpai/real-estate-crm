@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 300" width="500" height="300">
+  <!-- Analytics & Reporting Feature -->
+  <rect width="500" height="300" fill="#f8fafc" rx="8" />
+  
+  <!-- Chart Area -->
+  <rect x="20" y="20" width="280" height="260" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" rx="6" />
+  <rect x="35" y="35" width="150" height="15" fill="#1e293b" />
+  
+  <!-- Bar Chart -->
+  <rect x="35" y="65" width="240" height="180" fill="#ffffff" stroke="#f8fafc" stroke-width="1" />
+  
+  <!-- X axis -->
+  <line x1="35" y1="235" x2="275" y2="235" stroke="#94a3b8" stroke-width="1" />
+  
+  <!-- Y axis -->
+  <line x1="35" y1="235" x2="35" y2="65" stroke="#94a3b8" stroke-width="1" />
+  
+  <!-- X axis labels -->
+  <rect x="55" y="245" width="10" height="5" fill="#64748b" />
+  <rect x="95" y="245" width="10" height="5" fill="#64748b" />
+  <rect x="135" y="245" width="10" height="5" fill="#64748b" />
+  <rect x="175" y="245" width="10" height="5" fill="#64748b" />
+  <rect x="215" y="245" width="10" height="5" fill="#64748b" />
+  <rect x="255" y="245" width="10" height="5" fill="#64748b" />
+  
+  <!-- Y axis labels -->
+  <rect x="20" y="225" width="10" height="5" fill="#64748b" />
+  <rect x="20" y="185" width="10" height="5" fill="#64748b" />
+  <rect x="20" y="145" width="10" height="5" fill="#64748b" />
+  <rect x="20" y="105" width="10" height="5" fill="#64748b" />
+  <rect x="20" y="65" width="10" height="5" fill="#64748b" />
+  
+  <!-- Bars -->
+  <rect x="45" y="180" width="20" height="55" fill="#3b82f6" rx="2" />
+  <rect x="85" y="160" width="20" height="75" fill="#3b82f6" rx="2" />
+  <rect x="125" y="130" width="20" height="105" fill="#3b82f6" rx="2" />
+  <rect x="165" y="160" width="20" height="75" fill="#3b82f6" rx="2" />
+  <rect x="205" y="110" width="20" height="125" fill="#3b82f6" rx="2" />
+  <rect x="245" y="90" width="20" height="145" fill="#3b82f6" rx="2" />
+  
+  <!-- Stats Cards -->
+  <rect x="320" y="20" width="160" height="80" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" rx="6" />
+  <rect x="335" y="35" width="80" height="10" fill="#64748b" />
+  <rect x="335" y="55" width="60" height="25" fill="#1e293b" />
+  <rect x="335" y="85" width="40" height="5" fill="#94a3b8" />
+  
+  <rect x="320" y="110" width="160" height="80" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" rx="6" />
+  <rect x="335" y="125" width="70" height="10" fill="#64748b" />
+  <rect x="335" y="145" width="40" height="25" fill="#10b981" />
+  <rect x="335" y="175" width="40" height="5" fill="#94a3b8" />
+  
+  <rect x="320" y="200" width="160" height="80" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" rx="6" />
+  <rect x="335" y="215" width="75" height="10" fill="#64748b" />
+  <rect x="335" y="235" width="30" height="25" fill="#f59e0b" />
+  <rect x="335" y="265" width="40" height="5" fill="#94a3b8" />
+</svg>

@@ -10,6 +10,11 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
   output: 'standalone', // Enable standalone output for optimized deployment
+  images: {
+    dangerouslyAllowSVG: true, // Allow SVG content
+    contentDispositionType: 'attachment', // Helps prevent XSS attacks
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;", // Additional security
+  },
 };
 
 export default nextConfig;

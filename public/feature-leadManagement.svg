@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 300" width="500" height="300">
+  <!-- Lead Management Feature -->
+  <rect width="500" height="300" fill="#f8fafc" rx="8" />
+  
+  <!-- Lead Form -->
+  <rect x="20" y="20" width="180" height="260" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" rx="6" />
+  <rect x="35" y="35" width="150" height="15" fill="#1e293b" />
+  
+  <rect x="35" y="65" width="60" height="10" fill="#64748b" />
+  <rect x="35" y="80" width="150" height="30" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1" rx="4" />
+  
+  <rect x="35" y="125" width="60" height="10" fill="#64748b" />
+  <rect x="35" y="140" width="150" height="30" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1" rx="4" />
+  
+  <rect x="35" y="185" width="60" height="10" fill="#64748b" />
+  <rect x="35" y="200" width="150" height="30" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1" rx="4" />
+  
+  <rect x="100" y="245" width="85" height="25" fill="#3b82f6" rx="4" />
+  <rect x="125" y="252" width="40" height="10" fill="#ffffff" />
+  
+  <!-- Lead Pipeline -->
+  <rect x="220" y="20" width="260" height="260" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" rx="6" />
+  <rect x="235" y="35" width="150" height="15" fill="#1e293b" />
+  
+  <!-- Pipeline Stages -->
+  <rect x="235" y="65" width="70" height="180" fill="#f0f9ff" stroke="#bae6fd" stroke-width="1" rx="4" />
+  <rect x="245" y="75" width="50" height="10" fill="#0ea5e9" />
+  
+  <rect x="245" y="95" width="50" height="30" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" rx="4" />
+  <rect x="253" y="104" width="35" height="6" fill="#1e293b" />
+  <rect x="253" y="114" width="25" height="4" fill="#64748b" />
+  
+  <rect x="245" y="135" width="50" height="30" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" rx="4" />
+  <rect x="253" y="144" width="30" height="6" fill="#1e293b" />
+  <rect x="253" y="154" width="20" height="4" fill="#64748b" />
+  
+  <!-- Pipeline Stage 2 -->
+  <rect x="315" y="65" width="70" height="180" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1" rx="4" />
+  <rect x="325" y="75" width="50" height="10" fill="#22c55e" />
+  
+  <rect x="325" y="95" width="50" height="30" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" rx="4" />
+  <rect x="333" y="104" width="35" height="6" fill="#1e293b" />
+  <rect x="333" y="114" width="25" height="4" fill="#64748b" />
+  
+  <!-- Pipeline Stage 3 -->
+  <rect x="395" y="65" width="70" height="180" fill="#fef2f2" stroke="#fecaca" stroke-width="1" rx="4" />
+  <rect x="405" y="75" width="50" height="10" fill="#ef4444" />
+  
+  <rect x="405" y="95" width="50" height="30" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" rx="4" />
+  <rect x="413" y="104" width="35" height="6" fill="#1e293b" />
+  <rect x="413" y="114" width="25" height="4" fill="#64748b" />
+</svg>
