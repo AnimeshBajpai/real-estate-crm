@@ -16,19 +16,19 @@ export async function GET(request: Request) {
         companyId: session?.user?.companyId 
       });
       return new NextResponse("Unauthorized", { status: 401 });
-    }
-
-    // Extract query parameters
+    }    // Extract query parameters
     const { searchParams } = new URL(request.url);
     const ownerId = searchParams.get('ownerId');
     const companyId = searchParams.get('companyId'); // New parameter for filtering by company
-    
-    console.log("Session found:", {
+    const search = searchParams.get('search'); // New parameter for searching by name or phone
+      console.log("Session found:", {
       userId: session.user.id,
       companyId: session.user.companyId,
       role: session.user.role,
       requestedOwnerId: ownerId,
-      requestedCompanyId: companyId
+      requestedCompanyId: companyId,
+      searchQuery: search,
+      searchQueryDigitsOnly: search ? search.replace(/\D/g, '') : ''
     });
 
     // Determine which company to filter by
@@ -40,8 +40,46 @@ export async function GET(request: Request) {
     } else {
       // Non-super admins are restricted to their own company
       filterCompanyId = session.user.companyId;
+    }    // Build search conditions if search parameter is provided
+    let searchConditions = {};
+    if (search) {
+      // Convert search to lowercase for our manual case insensitivity
+      const searchLower = search.toLowerCase();
+      
+      // Clean the search term for phone number matching by removing common phone formatting
+      // This allows users to search with just the digits or in different formats
+      const cleanedPhoneSearch = search.replace(/[\s\-\(\)\+]/g, '');
+      
+      searchConditions = {
+        OR: [
+          // Search by name (manual case insensitivity)
+          {
+            name: {
+              contains: search // Regular search
+            }
+          },
+          // Also try with lowercase name for better matches
+          {
+            name: {
+              contains: searchLower 
+            }
+          },
+          // Search by phone number with exact contains
+          {
+            phone: {
+              contains: search
+            }
+          },
+          // Search by phone number with digits only (for when users type just numbers)
+          {
+            phone: {
+              contains: cleanedPhoneSearch
+            }
+          }
+        ]
+      };
     }
-
+    
     const leads = await prisma.lead.findMany({
       where: {
         // Apply the company filter - for super admins this might be undefined (all companies)
@@ -54,7 +92,10 @@ export async function GET(request: Request) {
           (session.user.role === 'SUB_BROKER' && {
             ownerId: session.user.id
           })
-        )
+        ),
+        
+        // Apply search filter if provided
+        ...(search ? searchConditions : {})
       },
       include: {
         company: {
@@ -94,10 +135,13 @@ export async function POST(req: Request) {
     }
     
     const data = await req.json();
-    const { name, phone, email, status, notes, assignedOwnerId, companyId } = data;
-
-    if (!name || !phone || !status) {
+    const { name, phone, email, status, notes, assignedOwnerId, companyId } = data;    if (!name || !phone || !status) {
       return new NextResponse("Missing required fields", { status: 400 });
+    }
+    
+    // Validate phone number is exactly 10 digits
+    if (!/^\d{10}$/.test(phone)) {
+      return new NextResponse("Phone number must be exactly 10 digits", { status: 400 });
     }
 
     // Determine company ID based on role

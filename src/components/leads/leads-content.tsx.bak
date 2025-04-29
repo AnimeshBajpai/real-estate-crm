@@ -97,7 +97,7 @@ export default function LeadsContent() {
   const [expandedSubbrokers, setExpandedSubbrokers] = useState<Record<string, boolean>>({});  const [isLoading, setIsLoading] = useState(true);
   const [isLoadingCompanies, setIsLoadingCompanies] = useState(true);
   const [isLoadingLeadBrokers, setIsLoadingLeadBrokers] = useState(false);
-  const [isLoadingSubbrokerLeads, setIsLoadingSubbrokerLeads] = useState<Record<string, boolean>>({});  const [isSearching, setIsSearching] = useState(false);
+  const [isLoadingSubbrokerLeads, setIsLoadingSubbrokerLeads] = useState<Record<string, boolean>>({});  const [isSearching, setIsSearching] = useState(false); // New state for search loading
   const [error, setError] = useState("");
   const [notification, setNotification] = useState<{ type: 'success' | 'error', message: string } | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -127,11 +127,11 @@ export default function LeadsContent() {
       
       if (session?.user?.role === 'SUPER_ADMIN' && selectedLeadBrokerId) {
         url.searchParams.append('leadBrokerId', selectedLeadBrokerId);
-      }      // Add search query without special phone preprocessing
+      }
+      
+      // Add search query
       if (searchQuery.trim()) {
-        // Just use the raw search query - exact matching as entered
-        const trimmedSearch = searchQuery.trim();
-        url.searchParams.append('search', trimmedSearch);
+        url.searchParams.append('search', searchQuery.trim());
       }
       
       const response = await fetch(url, {
@@ -158,22 +158,7 @@ export default function LeadsContent() {
       setIsSearching(false);
     }
   };
-
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearchQuery(value);
-    
-    // Debounce search requests to prevent excessive API calls
-    if (searchTimeoutRef.current) {
-      clearTimeout(searchTimeoutRef.current);
-    }
-    
-    searchTimeoutRef.current = setTimeout(() => {
-      // Call the specialized search function
-      searchLeads();
-    }, 500);
-  };
-
+  
   const fetchLeads = async () => {
     if (status !== 'authenticated') {
       console.log('Session not authenticated:', { status, session });
@@ -414,24 +399,18 @@ export default function LeadsContent() {
       }
     }
   }, [selectedSubbrokerId]);
-  // This effect runs when searchQuery changes to empty string
-  // It's separated from the debounce logic to ensure we immediately load all leads when cleared
+    // Special effect for search - we're not adding it to fetchLeads dependencies
+  // because the search has its own debounce logic and we don't want
+  // other filters to trigger it unnecessarily
   useEffect(() => {
     if (status === 'authenticated' && viewMode === 'all') {
-      // When search is cleared with empty string, reload all leads
+      // When search is cleared with empty string, search with empty query
       if (searchQuery === "") {
-        // Cancel any pending debounced search
-        if (searchTimeoutRef.current) {
-          clearTimeout(searchTimeoutRef.current);
-          searchTimeoutRef.current = null;
-        }
-        
-        // Use fetchLeads instead of searchLeads to do a full reload
-        fetchLeads();
+        searchLeads();
       }
       // The searching for non-empty queries is handled by debounce in handleSearchChange
     }
-  }, [searchQuery]);
+  }, [searchQuery === ""]);
   
   // Refetch leads when lead broker filter changes (for super admin)
   useEffect(() => {
@@ -758,6 +737,35 @@ export default function LeadsContent() {
     }
   };
 
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+    
+    // Debounce search requests to prevent excessive API calls
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+    
+    searchTimeoutRef.current = setTimeout(() => {
+      // Call the specialized search function
+      searchLeads();
+    }, 500);
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+    
+    // Debounce search requests to prevent excessive API calls
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+    
+    searchTimeoutRef.current = setTimeout(() => {
+      // Call the specialized search function instead of fetchLeads
+      searchLeads();
+    }, 500);
+  };
   return (
     <div className="leads-page">      <div className="leads-header">
         <div className="leads-header-left">
@@ -958,8 +966,7 @@ export default function LeadsContent() {
                   className="clear-search-button"
                   onClick={() => {
                     setSearchQuery("");
-                    // Use fetchLeads to do a full reload of all leads
-                    fetchLeads();
+                    searchLeads(); // Use searchLeads instead of fetchLeads
                   }}
                 >
                   Clear Search

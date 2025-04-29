@@ -43,11 +43,18 @@ export async function GET(request: Request) {
 
 // POST /api/users
 export async function POST(request: Request) {
-  try {
-    // Get the current user's session
+  try {    // Get the current user's session
     const session = await getServerSession(authOptions)
     const body = await request.json()
     const { name, phone, password, role, companyId } = body
+
+    // Validate phone number is exactly 10 digits
+    if (!/^\d{10}$/.test(phone)) {
+      return NextResponse.json(
+        { error: 'Phone number must be exactly 10 digits' },
+        { status: 400 }
+      )
+    }
 
     // Check if user already exists
     const existingUser = await prisma.user.findUnique({

@@ -31,10 +31,8 @@ export function AddLeadBrokerModal({ onClose, onLeadBrokerAdded }: AddLeadBroker
     if (password !== confirmPassword) {
       setError("Passwords don't match");
       return;
-    }
-
-    if (phone.length < 10) {
-      setError("Please enter a valid phone number");
+    }    if (!/^\d{10}$/.test(phone)) {
+      setError("Phone number must be exactly 10 digits");
       return;
     }
 
@@ -131,14 +129,18 @@ export function AddLeadBrokerModal({ onClose, onLeadBrokerAdded }: AddLeadBroker
                     </div>
                     
                     <div className="form-group">
-                      <label htmlFor="phone" className="form-label">Phone Number *</label>
-                      <input
+                      <label htmlFor="phone" className="form-label">Phone Number *</label>                      <input
                         id="phone"
-                        type="tel"
+                        type="text"
                         value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
+                        onChange={(e) => {
+                          // Allow only digits and limit to 10 digits
+                          const digitsOnly = e.target.value.replace(/\D/g, '');
+                          const limitedValue = digitsOnly.slice(0, 10);
+                          setPhone(limitedValue);
+                        }}
                         className="form-input"
-                        placeholder="Phone Number (used for login)"
+                        placeholder="Phone Number (exactly 10 digits)"
                         required
                       />
                     </div>

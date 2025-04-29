@@ -22,10 +22,17 @@ export function AddSubbrokerModal({ onClose, onSubbrokerAdded, selectedCompanyId
     password: "",
     confirmPassword: ""
   });
-  
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    
+    // For phone field, allow only digits and limit to 10 digits
+    if (name === 'phone') {
+      const digitsOnly = value.replace(/\D/g, '');
+      const limitedValue = digitsOnly.slice(0, 10);
+      setFormData(prev => ({ ...prev, [name]: limitedValue }));
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
   };
   
   const handleSubmit = async (e: React.FormEvent) => {
@@ -41,9 +48,8 @@ export function AddSubbrokerModal({ onClose, onSubbrokerAdded, selectedCompanyId
       setError("Passwords don't match");
       return;
     }
-    
-    if (formData.phone.length < 10) {
-      setError("Phone number must be at least 10 digits");
+      if (!/^\d{10}$/.test(formData.phone)) {
+      setError("Phone number must be exactly 10 digits");
       return;
     }
     
@@ -118,7 +124,7 @@ export function AddSubbrokerModal({ onClose, onSubbrokerAdded, selectedCompanyId
             <div className="input-container">
               <Phone size={18} className="input-icon" />
               <input
-                type="tel"
+                type="text"
                 id="phone"
                 name="phone"
                 value={formData.phone}

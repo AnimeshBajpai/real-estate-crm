@@ -21,20 +21,13 @@ interface EditLeadModalProps {
 }
 
 const validatePhoneNumber = (phone: string) => {
-  // Remove any non-digit characters for validation
-  const cleaned = phone.replace(/\D/g, '');
-  // Check if it's a valid length (between 10 and 15 digits)
-  return cleaned.length >= 10 && cleaned.length <= 15;
+  // Only check for exactly 10 digits, no formatting or special characters
+  return /^\d{10}$/.test(phone);
 };
 
+// No formatting - store phone numbers exactly as entered
 const formatPhoneNumber = (value: string) => {
-  // Remove any non-digit characters
-  const cleaned = value.replace(/\D/g, '');
-  // Format as per Indian mobile number format
-  if (cleaned.length >= 10) {
-    return `+${cleaned.slice(0, 2)} ${cleaned.slice(2, 7)}-${cleaned.slice(7, 12)}`;
-  }
-  return cleaned;
+  return value;
 };
 
 export function EditLeadModal({ lead, onClose, onLeadUpdated }: EditLeadModalProps) {
@@ -91,12 +84,15 @@ export function EditLeadModal({ lead, onClose, onLeadUpdated }: EditLeadModalPro
 
     fetchSubbrokers();
   }, [session?.user?.role]);
-
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const input = e.target.value;
-    const cleaned = input.replace(/\D/g, '');
-    setFormData({ ...formData, phone: cleaned });
-
+    // Only allow digits to be entered - no formatting
+    const value = e.target.value.replace(/[^\d]/g, '');
+    
+    // Limit to 10 digits max
+    const limitedValue = value.slice(0, 10);
+    
+    setFormData({ ...formData, phone: limitedValue });
+    
     if (validationErrors.phone) {
       setValidationErrors({ ...validationErrors, phone: undefined });
     }
@@ -107,10 +103,8 @@ export function EditLeadModal({ lead, onClose, onLeadUpdated }: EditLeadModalPro
 
     if (formData.name.trim().length < 3) {
       errors.name = "Name must be at least 3 characters long";
-    }
-
-    if (!validatePhoneNumber(formData.phone)) {
-      errors.phone = "Please enter a valid phone number (10-15 digits)";
+    }    if (!validatePhoneNumber(formData.phone)) {
+      errors.phone = "Please enter exactly 10 digits for the phone number";
     }
 
     if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
@@ -205,7 +199,7 @@ export function EditLeadModal({ lead, onClose, onLeadUpdated }: EditLeadModalPro
           <div className="form-group">
             <label htmlFor="phone">Phone Number *</label>
             <input
-              type="tel"
+              type="text"
               id="phone"
               required
               value={formData.phone}
