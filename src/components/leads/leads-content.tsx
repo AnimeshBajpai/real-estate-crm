@@ -22,7 +22,8 @@ import {
   UserCheck,
   Check,
   X,
-  Search
+  Search,
+  Trash2
 } from "lucide-react";
 import { FilterDropdown } from "@/components/ui/filter-dropdown";
 import { BrokerFilterDropdown } from "@/components/ui/broker-filter-dropdown";
@@ -32,6 +33,7 @@ import { AddLeadModal } from "@/components/leads/add-lead-modal";
 import { AddSubbrokerModal } from "@/components/leads/add-subbroker-modal";
 import { ReassignLeadModal } from "@/components/leads/reassign-lead-modal";
 import { EditLeadModal } from "@/components/leads/edit-lead-modal";
+import { DeleteConfirmationModal } from "@/components/leads/delete-confirmation-modal";
 import { Notification } from "@/components/ui/notification";
 import "@/app/dashboard/leads/leads.css";
 
@@ -79,10 +81,11 @@ export default function LeadsContent() {
   const { data: session, status } = useSession();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubbrokerModalOpen, setIsSubbrokerModalOpen] = useState(false);
-  const [isReassignModalOpen, setIsReassignModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isReassignModalOpen, setIsReassignModalOpen] = useState(false);  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedLeadForReassign, setSelectedLeadForReassign] = useState<Lead | null>(null);
   const [selectedLeadForEdit, setSelectedLeadForEdit] = useState<Lead | null>(null);
+  const [selectedLeadForDelete, setSelectedLeadForDelete] = useState<Lead | null>(null);
   const [openActionMenu, setOpenActionMenu] = useState<string | null>(null);
   const actionMenuRef = useRef<HTMLDivElement>(null);
   const [leads, setLeads] = useState<Lead[]>([]);
@@ -132,6 +135,7 @@ export default function LeadsContent() {
         // Just use the raw search query - exact matching as entered
         const trimmedSearch = searchQuery.trim();
         url.searchParams.append('search', trimmedSearch);
+        console.log(`Adding search param: "${trimmedSearch}"`);
       }
       
       const response = await fetch(url, {
@@ -157,10 +161,13 @@ export default function LeadsContent() {
     } finally {
       setIsSearching(false);
     }
-  };
-
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  };  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
+    
+    // Directly capture the input value at the time of the event
+    const capturedValue = value; // No need for useRef here
+    
+    // Update the UI immediately
     setSearchQuery(value);
     
     // Debounce search requests to prevent excessive API calls
@@ -169,8 +176,63 @@ export default function LeadsContent() {
     }
     
     searchTimeoutRef.current = setTimeout(() => {
-      // Call the specialized search function
-      searchLeads();
+      // Create a function that captures the exact value in its closure
+      const doSearch = () => {
+        console.log(`Executing search with exact query: "${capturedValue}"`);
+        
+        // Use the direct fetch without going through searchLeads
+        const executeSearch = async () => {
+          try {
+            setIsSearching(true);
+            
+            // Build URL with parameters
+            const url = new URL('/api/leads', window.location.origin);
+            
+            // Include filters
+            if (session?.user?.role === 'SUPER_ADMIN' && selectedCompanyId) {
+              url.searchParams.append('companyId', selectedCompanyId);
+            }
+            
+            if (selectedSubbrokerId) {
+              url.searchParams.append('ownerId', selectedSubbrokerId);
+            }
+            
+            if (session?.user?.role === 'SUPER_ADMIN' && selectedLeadBrokerId) {
+              url.searchParams.append('leadBrokerId', selectedLeadBrokerId);
+            }
+            
+            // Add the search query from the directly captured value instead of state
+            if (capturedValue.trim()) {
+              url.searchParams.append('search', capturedValue.trim());
+              console.log(`API search param added: "${capturedValue.trim()}"`);
+            }
+            
+            const response = await fetch(url, {
+              method: 'GET',
+              headers: { 'Content-Type': 'application/json' },
+              credentials: 'include'
+            });
+            
+            if (!response.ok) {
+              const errorText = await response.text();
+              throw new Error(errorText || 'Failed to search leads');
+            }
+            
+            const data = await response.json();
+            setLeads(data);
+          } catch (error) {
+            console.error('Search error:', error);
+          } finally {
+            setIsSearching(false);
+          }
+        };
+        
+        // Execute the search immediately
+        executeSearch();
+      };
+      
+      // Run the search function
+      doSearch();
     }, 500);
   };
 
@@ -413,25 +475,69 @@ export default function LeadsContent() {
         fetchSubbrokerLeads(selectedSubbrokerId);
       }
     }
-  }, [selectedSubbrokerId]);
-  // This effect runs when searchQuery changes to empty string
+  }, [selectedSubbrokerId]);  // This effect runs when searchQuery changes to empty string
   // It's separated from the debounce logic to ensure we immediately load all leads when cleared
   useEffect(() => {
     if (status === 'authenticated' && viewMode === 'all') {
       // When search is cleared with empty string, reload all leads
       if (searchQuery === "") {
+        console.log('Search cleared - reloading all leads');
+        
         // Cancel any pending debounced search
         if (searchTimeoutRef.current) {
           clearTimeout(searchTimeoutRef.current);
           searchTimeoutRef.current = null;
         }
         
-        // Use fetchLeads instead of searchLeads to do a full reload
-        fetchLeads();
+        // Use fetchLeads with a specific implementation to ensure immediate execution
+        const loadAllLeads = async () => {
+          try {
+            setIsLoading(true);
+            
+            // Build URL with default filters but no search query
+            const url = new URL('/api/leads', window.location.origin);
+            
+            // Include filters
+            if (session?.user?.role === 'SUPER_ADMIN' && selectedCompanyId) {
+              url.searchParams.append('companyId', selectedCompanyId);
+            }
+            
+            if (selectedSubbrokerId) {
+              url.searchParams.append('ownerId', selectedSubbrokerId);
+            }
+            
+            if (session?.user?.role === 'SUPER_ADMIN' && selectedLeadBrokerId) {
+              url.searchParams.append('leadBrokerId', selectedLeadBrokerId);
+            }
+            
+            console.log('Loading all leads without search query');
+            
+            const response = await fetch(url, {
+              method: 'GET',
+              headers: { 'Content-Type': 'application/json' },
+              credentials: 'include'
+            });
+            
+            if (!response.ok) {
+              const errorText = await response.text();
+              throw new Error(errorText || 'Failed to load leads');
+            }
+            
+            const data = await response.json();
+            setLeads(data);
+          } catch (error) {
+            console.error('Error loading all leads:', error);
+          } finally {
+            setIsLoading(false);
+          }
+        };
+        
+        // Execute immediately
+        loadAllLeads();
       }
       // The searching for non-empty queries is handled by debounce in handleSearchChange
     }
-  }, [searchQuery]);
+  }, [searchQuery, status, viewMode, session?.user?.role, selectedCompanyId, selectedSubbrokerId, selectedLeadBrokerId]);
   
   // Refetch leads when lead broker filter changes (for super admin)
   useEffect(() => {
@@ -597,8 +703,7 @@ export default function LeadsContent() {
             <MoreVertical size={16} />
           </button>
             {openActionMenu === lead.id && (
-            <div className="lead-action-menu" ref={actionMenuRef}>
-              {/* Allow both lead brokers and super admins to reassign leads */}
+            <div className="lead-action-menu" ref={actionMenuRef}>              {/* Allow both lead brokers and super admins to reassign leads */}
               {(session?.user?.role === 'LEAD_BROKER' || 
                 (session?.user?.role === 'SUPER_ADMIN' && selectedCompanyId)) && (
                 <button 
@@ -613,7 +718,26 @@ export default function LeadsContent() {
                   Reassign Owner
                 </button>
               )}
-              {/* Add more menu items here as needed */}
+              {/* Edit lead option */}
+              <button 
+                className="menu-item"
+                onClick={() => {
+                  setSelectedLeadForEdit(lead);
+                  setIsEditModalOpen(true);
+                  setOpenActionMenu(null);
+                }}
+              >
+                <Edit size={16} />
+                Edit Lead
+              </button>
+              {/* Delete lead option */}
+              <button 
+                className="menu-item delete-item"
+                onClick={() => handleDeleteLead(lead)}
+              >
+                <Trash2 size={16} />
+                Delete Lead
+              </button>
             </div>
           )}
         </div>
@@ -700,7 +824,52 @@ export default function LeadsContent() {
         }
       });
     }
+  };  // Handle deleting a lead
+  const handleDeleteLead = (lead: Lead) => {
+    setSelectedLeadForDelete(lead);
+    setIsDeleteModalOpen(true);
+    setOpenActionMenu(null);
   };
+
+  // Handle confirming lead deletion
+  const handleConfirmDelete = async () => {
+    if (!selectedLeadForDelete) return;
+    
+    const response = await fetch(`/api/leads/${selectedLeadForDelete.id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include'
+    });
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(errorText || 'Failed to delete lead');
+    }
+    
+    // Show success notification
+    setNotification({
+      type: 'success',
+      message: 'Lead deleted successfully'
+    });
+    
+    // Refresh leads data based on current view
+    if (viewMode === 'all') {
+      fetchLeads();
+    } else {
+      // If in subbroker view, refresh subbroker leads
+      fetchSubbrokers();
+      
+      // If any subbroker section is expanded, refresh their leads
+      Object.entries(expandedSubbrokers).forEach(([subbrokerId, isExpanded]) => {
+        if (isExpanded) {
+          fetchSubbrokerLeads(subbrokerId);
+        }
+      });
+    }
+  };
+
   // Handle prioritizing/starring a lead
   const handleTogglePriority = async (lead: Lead) => {
     try {
@@ -770,8 +939,7 @@ export default function LeadsContent() {
             </div>
           )}
         </div>
-        
-        <div className="search-container">
+          <div className="search-container">
           <div className="search-wrapper">
             <Phone size={16} className="search-icon" />            <input
               type="text"
@@ -785,19 +953,8 @@ export default function LeadsContent() {
               <button 
                 className="search-clear-button"
                 onClick={() => {
+                  // Clear the search query - this will trigger the useEffect for empty searches
                   setSearchQuery("");
-                  fetchLeads();
-                }}
-                aria-label="Clear search"
-              >
-                <X size={16} />
-              </button>
-            )}{searchQuery && (
-              <button 
-                className="search-clear-button"
-                onClick={() => {
-                  setSearchQuery("");
-                  fetchLeads();
                 }}
                 aria-label="Clear search"
               >
@@ -1057,12 +1214,23 @@ export default function LeadsContent() {
           onLeadUpdated={handleLeadUpdated}
         />
       )}
-      
-      {notification && (
+        {notification && (
         <Notification 
           type={notification.type}
           message={notification.message}
           onClose={() => setNotification(null)}
+        />
+      )}
+
+      {isDeleteModalOpen && selectedLeadForDelete && (
+        <DeleteConfirmationModal
+          isOpen={isDeleteModalOpen}
+          leadName={selectedLeadForDelete.name}
+          onClose={() => {
+            setIsDeleteModalOpen(false);
+            setSelectedLeadForDelete(null);
+          }}
+          onConfirm={handleConfirmDelete}
         />
       )}
     </div>

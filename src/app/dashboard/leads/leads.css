@@ -226,6 +226,15 @@
   color: #1f2937;
 }
 
+.menu-item.delete-item {
+  color: #ef4444;
+}
+
+.menu-item.delete-item:hover {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
 /* View Toggle Styles */
 .view-toggle {
   display: flex;
